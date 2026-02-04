@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUser;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserData;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserResponse;
+import com.matheusgondra.books.exception.UserAlreadyExistsException;
 import com.matheusgondra.books.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,9 @@ public class SignupService implements RegisterUser {
 
     @Override
     public RegisterUserResponse execute(RegisterUserData registerUserData) {
-        this.repository.findByEmail(registerUserData.email());
+        this.repository.findByEmail(registerUserData.email()).ifPresent(user -> {
+            throw new UserAlreadyExistsException();
+        });
 
         return null;
     }
