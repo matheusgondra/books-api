@@ -14,12 +14,15 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class SignupService implements RegisterUser {
     private final UserRepository repository;
+    private final HashService hashService;
 
     @Override
     public RegisterUserResponse execute(RegisterUserData registerUserData) {
         this.repository.findByEmail(registerUserData.email()).ifPresent(user -> {
             throw new UserAlreadyExistsException();
         });
+
+        this.hashService.hash(registerUserData.password());
 
         return null;
     }
