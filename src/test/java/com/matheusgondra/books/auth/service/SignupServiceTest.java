@@ -1,12 +1,14 @@
 package com.matheusgondra.books.auth.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,16 +28,22 @@ public class SignupServiceTest {
     @Mock
     private UserRepository repository;
 
+    @Mock
+    private HashService hashService;
+
     private final RegisterUserData registerUserData = new RegisterUserData(
             "anyFirstName",
             "anyLastName",
             "any.email@example.com",
             "anyPassword@123");
 
+    @BeforeEach
+    void setup() {
+        when(repository.findByEmail(anyString())).thenReturn(Optional.empty());
+    }
+
     @Test
     void shouldCallFindByEmailMethod() {
-        when(repository.findByEmail(registerUserData.email())).thenReturn(Optional.empty());
-
         sut.execute(registerUserData);
 
         verify(repository, times(1)).findByEmail(registerUserData.email());
@@ -48,5 +56,14 @@ public class SignupServiceTest {
         assertThrows(UserAlreadyExistsException.class, () -> {
             sut.execute(registerUserData);
         });
+    }
+
+    @Test
+    void shouldCallHashService() {
+        when(hashService.hash(anyString())).thenReturn("anyHash");
+
+        sut.execute(registerUserData);
+
+        verify(hashService, times(1)).hash(registerUserData.password());
     }
 }
