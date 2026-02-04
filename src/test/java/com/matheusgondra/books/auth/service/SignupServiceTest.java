@@ -2,6 +2,7 @@ package com.matheusgondra.books.auth.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,6 +41,7 @@ public class SignupServiceTest {
     @BeforeEach
     void setup() {
         when(repository.findByEmail(anyString())).thenReturn(Optional.empty());
+        lenient().when(hashService.hash(anyString())).thenReturn("anyHash");
     }
 
     @Test
@@ -51,7 +53,7 @@ public class SignupServiceTest {
 
     @Test
     void shouldThrowExceptionIfUserRespositoryReturnAUser() {
-        when(repository.findByEmail(registerUserData.email())).thenReturn(Optional.of(new User()));
+        when(repository.findByEmail(anyString())).thenReturn(Optional.of(new User()));
 
         assertThrows(UserAlreadyExistsException.class, () -> {
             sut.execute(registerUserData);
@@ -60,10 +62,21 @@ public class SignupServiceTest {
 
     @Test
     void shouldCallHashService() {
-        when(hashService.hash(anyString())).thenReturn("anyHash");
-
         sut.execute(registerUserData);
 
         verify(hashService, times(1)).hash(registerUserData.password());
+    }
+
+    @Test
+    void shouldCallSaveMethod() {
+        sut.execute(registerUserData);
+
+        User expectedUser = new User(
+                registerUserData.firstName(),
+                registerUserData.lastName(),
+                registerUserData.email(),
+                "anyHash");
+
+        verify(repository, times(1)).save(expectedUser);
     }
 }
