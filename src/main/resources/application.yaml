@@ -1,0 +1,19 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: books
+  output:
+    ansi:
+      enabled: ALWAYS
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/books_db}
+    username: ${DB_USER:dev}
+    password: ${DB_PASSWORD:dev}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
