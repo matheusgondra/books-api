@@ -1,5 +1,6 @@
 package com.matheusgondra.books.auth.service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,6 +14,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserData;
+import com.matheusgondra.books.exception.UserAlreadyExistsException;
+import com.matheusgondra.books.user.model.User;
 import com.matheusgondra.books.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,5 +39,14 @@ public class SignupServiceTest {
         sut.execute(registerUserData);
 
         verify(repository, times(1)).findByEmail(registerUserData.email());
+    }
+
+    @Test
+    void shouldThrowExceptionIfUserRespositoryReturnAUser() {
+        when(repository.findByEmail(registerUserData.email())).thenReturn(Optional.of(new User()));
+
+        assertThrows(UserAlreadyExistsException.class, () -> {
+            sut.execute(registerUserData);
+        });
     }
 }
