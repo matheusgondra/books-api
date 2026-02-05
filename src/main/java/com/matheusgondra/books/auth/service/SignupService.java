@@ -32,8 +32,16 @@ public class SignupService implements RegisterUser {
                 registerUserData.lastName(),
                 registerUserData.email(),
                 hashedPassword);
-        this.repository.save(newUser);
+        User createdUser = this.repository.save(newUser);
 
-        return null;
+        RegisterUserResponse response = new RegisterUserResponse(
+                createdUser.getId(),
+                createdUser.getFirstName(),
+                createdUser.getLastName(),
+                createdUser.getEmail(),
+                createdUser.getCreatedAt(),
+                createdUser.getUpdatedAt());
+
+        return response;
     }
 }
