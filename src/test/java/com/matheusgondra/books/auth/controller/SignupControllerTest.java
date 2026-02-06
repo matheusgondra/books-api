@@ -57,4 +57,21 @@ public class SignupControllerTest extends BaseIntegrationTest {
         assertNotNull(signupResponse.createdAt());
         assertNotNull(signupResponse.updatedAt());
     }
+
+    @Test
+    void shouldReturn400OnInvalidRequest() throws JsonProcessingException {
+        SignupRequestDTO invalidDTO = new SignupRequestDTO(
+                "",
+                "Doe",
+                "",
+                "pwd");
+
+        RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(this.objectMapper.writeValueAsString(invalidDTO))
+                .when()
+                .post("/api/signup")
+                .then()
+                .statusCode(400);
+    }
 }
