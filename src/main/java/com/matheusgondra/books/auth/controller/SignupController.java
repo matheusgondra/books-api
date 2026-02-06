@@ -26,11 +26,11 @@ public class SignupController {
 
     @PostMapping
     public ResponseEntity<SignupResponseDTO> handle(@RequestBody @Valid SignupRequestDTO dto) {
-        log.info("DTO recebido: {}", dto);
+        log.debug("DTO: {}", dto);
         RegisterUserData data = new RegisterUserData(dto.firstName(), dto.lastName(), dto.email(), dto.password());
 
         RegisterUserResponse result = this.useCase.execute(data);
-        log.info("Resultado do caso de uso: {}", result);
+        log.debug("UseCase result: {}", result);
         SignupResponseDTO response = new SignupResponseDTO(
                 result.id(),
                 result.firstName(),
