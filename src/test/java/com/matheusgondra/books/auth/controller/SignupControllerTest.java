@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.matheusgondra.books.auth.dto.request.SignupRequestDTO;
 import com.matheusgondra.books.auth.dto.response.SignupResponseDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
+import com.matheusgondra.books.exception.response.ErrorResponse;
 import com.matheusgondra.books.user.repository.UserRepository;
 
 import io.restassured.RestAssured;
@@ -25,6 +26,12 @@ public class SignupControllerTest extends BaseIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    private final SignupRequestDTO dto = new SignupRequestDTO(
+            "John",
+            "Doe",
+            "john.doe@email.com",
+            "Password@123");
+
     @BeforeEach
     void setup() {
         this.userRepository.deleteAll();
@@ -32,12 +39,6 @@ public class SignupControllerTest extends BaseIntegrationTest {
 
     @Test
     void shouldReturn201OnSuccess() throws JsonMappingException, JsonProcessingException {
-        SignupRequestDTO dto = new SignupRequestDTO(
-                "John",
-                "Doe",
-                "john.doe@email.com",
-                "Password@123");
-
         String response = RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(this.objectMapper.writeValueAsString(dto))
@@ -73,5 +74,32 @@ public class SignupControllerTest extends BaseIntegrationTest {
                 .post("/api/signup")
                 .then()
                 .statusCode(400);
+    }
+
+    @Test
+    void shouldReturn409WhenUserAlreadyExists() throws JsonMappingException, JsonProcessingException {
+        RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(this.objectMapper.writeValueAsString(dto))
+                .when()
+                .post("/api/signup")
+                .then()
+                .statusCode(201);
+
+        String response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(this.objectMapper.writeValueAsString(dto))
+                .when()
+                .post("/api/signup")
+                .then()
+                .statusCode(409)
+                .extract()
+                .response()
+                .asString();
+
+        ErrorResponse errorResponse = this.objectMapper.readValue(response, ErrorResponse.class);
+
+        assertEquals(409, errorResponse.status());
+        assertEquals("User already exists", errorResponse.message());
     }
 }
