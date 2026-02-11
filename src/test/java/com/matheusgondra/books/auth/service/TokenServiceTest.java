@@ -1,6 +1,7 @@
 package com.matheusgondra.books.auth.service;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,5 +24,14 @@ public class TokenServiceTest {
 
         assertNotNull(token);
         assertTrue(token.split("\\.").length == 3);
+    }
+
+    @Test
+    void shouldReturnNullWhenTokenCreationFails() {
+        TokenService invalidSut = new TokenService("");
+
+        String token = invalidSut.generateToken("testPayload");
+
+        assertNull(token);
     }
 }
