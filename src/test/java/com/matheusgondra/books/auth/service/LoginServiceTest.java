@@ -1,8 +1,10 @@
 package com.matheusgondra.books.auth.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import com.matheusgondra.books.auth.usecase.login.LoginData;
+import com.matheusgondra.books.exception.InvalidCredentialsException;
 import com.matheusgondra.books.user.model.User;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,10 +47,11 @@ public class LoginServiceTest {
     void setUp() {
         data = new LoginData("any@email.com", "anyPassword");
 
-        when(user.getId()).thenReturn(UUID.randomUUID());
-        when(authMock.getPrincipal()).thenReturn(user);
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authMock);
-        when(tokenService.generateToken(anyString())).thenReturn("anyToken");
+        lenient().when(authMock.getPrincipal()).thenReturn(user);
+        lenient().when(user.getId()).thenReturn(UUID.randomUUID());
+        lenient().when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(authMock);
+        lenient().when(tokenService.generateToken(anyString())).thenReturn("anyToken");
     }
 
     @Test
@@ -70,5 +74,13 @@ public class LoginServiceTest {
         var response = sut.execute(data);
 
         assertEquals(response.token(), "anyToken");
+    }
+
+    @Test
+    void shouldThrowInvalidCredentialsExceptionWhenAuthenticationFails() {
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(RuntimeException.class);
+
+        assertThrows(InvalidCredentialsException.class, () -> sut.execute(data));
     }
 }
