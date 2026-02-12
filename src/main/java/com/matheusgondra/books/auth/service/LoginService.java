@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import com.matheusgondra.books.auth.usecase.login.Login;
 import com.matheusgondra.books.auth.usecase.login.LoginData;
 import com.matheusgondra.books.auth.usecase.login.LoginResponse;
+import com.matheusgondra.books.exception.InvalidCredentialsException;
 import com.matheusgondra.books.user.model.User;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class LoginService implements Login {
@@ -20,13 +23,20 @@ public class LoginService implements Login {
 
     @Override
     public LoginResponse execute(LoginData data) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(data.email(),
-                data.password());
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    data.email(),
+                    data.password());
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-        User user = (User) authentication.getPrincipal();
-        String token = tokenService.generateToken(user.getId().toString());
+            User user = (User) authentication.getPrincipal();
+            String token = tokenService.generateToken(user.getId().toString());
 
-        return new LoginResponse(token);
+            return new LoginResponse(token);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+
+            throw new InvalidCredentialsException();
+        }
     }
 }
