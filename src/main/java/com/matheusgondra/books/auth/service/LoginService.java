@@ -25,8 +25,8 @@ public class LoginService implements Login {
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
         User user = (User) authentication.getPrincipal();
-        tokenService.generateToken(user.getId().toString());
+        String token = tokenService.generateToken(user.getId().toString());
 
-        return null;
+        return new LoginResponse(token);
     }
 }
