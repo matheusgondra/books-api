@@ -1,6 +1,8 @@
 package com.matheusgondra.books.auth.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,6 +47,7 @@ public class LoginServiceTest {
         when(user.getId()).thenReturn(UUID.randomUUID());
         when(authMock.getPrincipal()).thenReturn(user);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authMock);
+        when(tokenService.generateToken(anyString())).thenReturn("anyToken");
     }
 
     @Test
@@ -60,5 +63,12 @@ public class LoginServiceTest {
         sut.execute(data);
 
         verify(tokenService).generateToken(user.getId().toString());
+    }
+
+    @Test
+    void shouldReturnToken() {
+        var response = sut.execute(data);
+
+        assertEquals(response.token(), "anyToken");
     }
 }
