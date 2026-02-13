@@ -1,3 +1,7 @@
+api:
+  jwt:
+    secret: ${JWT_SECRET:mySecretKey}
+    
 server:
   port: ${PORT:8080}
 
@@ -20,6 +24,3 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
-
-jwt:
-  secret: ${JWT_SECRET:mySecretKey}
