@@ -12,11 +12,9 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 
 @Service
 public class TokenService {
-    private final String secretKey;
     private final Algorithm algorithm;
 
     public TokenService(@Value("${api.jwt.secret}") String secretKey) {
-        this.secretKey = secretKey;
         this.algorithm = Algorithm.HMAC256(secretKey);
     }
 
