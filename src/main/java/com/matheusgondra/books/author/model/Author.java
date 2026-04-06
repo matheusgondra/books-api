@@ -39,4 +39,8 @@ public class Author {
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    public Author(String name) {
+        this.name = name;
+    }
 }

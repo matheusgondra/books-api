@@ -1,0 +1,30 @@
+package com.matheusgondra.books.author.usecase;
+
+import org.springframework.stereotype.Service;
+
+import com.matheusgondra.books.author.model.Author;
+import com.matheusgondra.books.author.repository.AuthorRepository;
+import com.matheusgondra.books.author.usecase.register.author.RegisterAuthor;
+import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorData;
+import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorResponse;
+
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Service
+public class RegisterAuthorService implements RegisterAuthor {
+    private final AuthorRepository repository;
+
+    @Override
+    public RegisterAuthorResponse execute(RegisterAuthorData data) {
+        Author author = new Author(data.name());
+
+        repository.save(author);
+
+        return new RegisterAuthorResponse(
+                author.getId(),
+                author.getName(),
+                author.getCreatedAt(),
+                author.getUpdatedAt());
+    }
+}
