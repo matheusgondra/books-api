@@ -1,4 +1,4 @@
-package com.matheusgondra.books.auth.service;
+package com.matheusgondra.books.cryptography.service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

@@ -1,5 +1,6 @@
 package com.matheusgondra.books.auth.service;
 
+import com.matheusgondra.books.cryptography.service.TokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

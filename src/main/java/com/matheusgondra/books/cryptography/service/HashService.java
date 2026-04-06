@@ -1,4 +1,4 @@
-package com.matheusgondra.books.auth.service;
+package com.matheusgondra.books.cryptography.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

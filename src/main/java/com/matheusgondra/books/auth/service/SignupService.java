@@ -1,5 +1,6 @@
 package com.matheusgondra.books.auth.service;
 
+import com.matheusgondra.books.cryptography.service.HashService;
 import org.springframework.stereotype.Service;
 
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUser;
