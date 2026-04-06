@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.matheusgondra.books.auth.dto.request.LoginRequestDTO;
 import com.matheusgondra.books.auth.dto.response.LoginResponseDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
-import com.matheusgondra.books.cryptography.service.HashService;
+import com.matheusgondra.books.factory.UserFactory;
 import com.matheusgondra.books.user.model.User;
 import com.matheusgondra.books.user.repository.UserRepository;
 
@@ -29,18 +29,9 @@ public class LoginControllerTest extends BaseIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private HashService hashService;
-
     @BeforeEach
     void setup() {
-        String passwordHash = hashService.hash(passwordMock);
-        User user = User.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email(emailMock)
-                .password(passwordHash)
-                .build();
+        User user = UserFactory.create();
 
         userRepository.save(user);
     }
