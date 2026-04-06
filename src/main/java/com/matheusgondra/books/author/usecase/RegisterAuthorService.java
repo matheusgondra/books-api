@@ -24,7 +24,7 @@ public class RegisterAuthorService implements RegisterAuthor {
 
         Author author = new Author(data.name());
 
-        repository.save(author);
+        author = repository.save(author);
 
         return new RegisterAuthorResponse(
                 author.getId(),
