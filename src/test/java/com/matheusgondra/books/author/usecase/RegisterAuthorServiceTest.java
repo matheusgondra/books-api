@@ -54,4 +54,11 @@ public class RegisterAuthorServiceTest {
 
         assertThrows(AuthorAlreadyExistsException.class, () -> sut.execute(dataMock));
     }
+
+    @Test
+    void shouldThrowIfAuthorRepositoryThrows() {
+        when(repository.save(any(Author.class))).thenThrow(new RuntimeException());
+
+        assertThrows(RuntimeException.class, () -> sut.execute(dataMock));
+    }
 }
