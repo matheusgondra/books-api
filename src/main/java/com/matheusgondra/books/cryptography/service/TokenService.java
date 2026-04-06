@@ -13,14 +13,14 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 @Service
 public class TokenService {
     private final String secretKey;
+    private final Algorithm algorithm;
 
     public TokenService(@Value("${api.jwt.secret}") String secretKey) {
         this.secretKey = secretKey;
+        this.algorithm = Algorithm.HMAC256(secretKey);
     }
 
     public String generateToken(String payload) {
-        Algorithm algorithm = Algorithm.HMAC256(secretKey);
-
         try {
             return JWT.create()
                     .withSubject(payload)
@@ -28,6 +28,18 @@ public class TokenService {
                     .withExpiresAt(getExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException | IllegalArgumentException ex) {
+            return null;
+        }
+    }
+
+    public String validateToken(String token) {
+        try {
+            return JWT.require(algorithm)
+                    .withIssuer("books-api")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (Exception ex) {
             return null;
         }
     }
