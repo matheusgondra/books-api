@@ -1,5 +1,6 @@
 package com.matheusgondra.books.auth.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.AfterEach;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.matheusgondra.books.auth.dto.request.LoginRequestDTO;
 import com.matheusgondra.books.auth.dto.response.LoginResponseDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
+import com.matheusgondra.books.exception.response.ErrorResponse;
 import com.matheusgondra.books.factory.UserFactory;
 import com.matheusgondra.books.user.model.User;
 import com.matheusgondra.books.user.repository.UserRepository;
@@ -64,6 +66,23 @@ public class LoginControllerTest extends BaseIntegrationTest {
                 .then()
                 .statusCode(400);
 
+    }
+
+    @Test
+    void shouldReturn401OnInvalidCredentials() {
+        var invalidDTO = new LoginRequestDTO("nonexistent@gmail.com", "WrongPassword@123");
+
+        String response = createBaseRequest(invalidDTO)
+                .then()
+                .statusCode(401)
+                .extract()
+                .response()
+                .asString();
+
+        ErrorResponse loginResponse = objectMapper.readValue(response, ErrorResponse.class);
+
+        assertEquals(401, loginResponse.status());
+        assertEquals("Invalid credentials", loginResponse.message());
     }
 
     private Response createBaseRequest() {
