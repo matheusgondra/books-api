@@ -40,6 +40,13 @@ public class RegisterAuthorServiceTest {
     }
 
     @Test
+    void shouldCallFindByNameMethodOnRepository() {
+        sut.execute(dataMock);
+
+        verify(repository, times(1)).findByName(dataMock.name());
+    }
+
+    @Test
     void shouldThrowAuthorAlreadyExistsIfAuthorAlreadyExists() {
         Author authorMock = new Author(dataMock.name());
 
