@@ -1,6 +1,5 @@
-package com.matheusgondra.books.auth.service;
+package com.matheusgondra.books.cryptography.service;
 
-import com.matheusgondra.books.cryptography.service.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
