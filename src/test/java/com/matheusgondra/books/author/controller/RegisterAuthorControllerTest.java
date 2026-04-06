@@ -3,8 +3,7 @@ package com.matheusgondra.books.author.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.matheusgondra.books.auth.dto.request.SignupRequestDTO;
-import com.matheusgondra.books.auth.dto.request.LoginRequestDTO;
+import com.matheusgondra.books.auth.helper.AuthHelper;
 import com.matheusgondra.books.author.dto.request.RegisterAuthorRequestDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
 
@@ -13,43 +12,26 @@ import io.restassured.http.ContentType;
 import tools.jackson.databind.ObjectMapper;
 
 public class RegisterAuthorControllerTest extends BaseIntegrationTest {
-    private final RegisterAuthorRequestDTO dto = new RegisterAuthorRequestDTO("anyAuthor");
+	private final RegisterAuthorRequestDTO dto = new RegisterAuthorRequestDTO("anyAuthor");
 
-    @Autowired
-    private ObjectMapper objectMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
-    @Test
-    void shouldReturn201OnSuccess() {
-        var signupDTO = new SignupRequestDTO("john", "doe", "john@mail.com", "Password@123");
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(signupDTO))
-                .when()
-                .post("/api/signup")
-                .then()
-                .statusCode(201);
+	@Autowired
+	private AuthHelper authHelper;
 
-        var loginDTO = new LoginRequestDTO(signupDTO.email(), signupDTO.password());
-        String loginResponse = RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(loginDTO))
-                .when()
-                .post("/api/login")
-                .then()
-                .statusCode(200)
-                .extract()
-                .response()
-                .asString();
+	@Test
+	void shouldReturn201OnSuccess() {
+		String accessToken = authHelper.getAccessToken();
 
-        String accessToken = objectMapper.readTree(loginResponse).get("access_token").asString();
+		RestAssured.given()
+				.contentType(ContentType.JSON)
+				.body(objectMapper.writeValueAsString(dto))
+				.header("Authorization", "Bearer " + accessToken)
+				.when()
+				.post("/api/author/register")
+				.then()
+				.statusCode(201);
 
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(dto))
-                .header("Authorization", "Bearer " + accessToken)
-                .when()
-                .post("/api/author/register")
-                .then()
-                .statusCode(201);
-    }
+	}
 }
