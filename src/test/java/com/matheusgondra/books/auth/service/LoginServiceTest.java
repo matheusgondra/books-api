@@ -74,7 +74,7 @@ public class LoginServiceTest {
     void shouldReturnToken() {
         var response = sut.execute(data);
 
-        assertEquals(response.token(), "anyToken");
+        assertEquals("anyToken", response.token());
     }
 
     @Test

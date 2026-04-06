@@ -35,14 +35,12 @@ public class SignupService implements RegisterUser {
                 hashedPassword);
         User createdUser = this.repository.save(newUser);
 
-        RegisterUserResponse response = new RegisterUserResponse(
+        return new RegisterUserResponse(
                 createdUser.getId(),
                 createdUser.getFirstName(),
                 createdUser.getLastName(),
                 createdUser.getEmail(),
                 createdUser.getCreatedAt(),
                 createdUser.getUpdatedAt());
-
-        return response;
     }
 }

@@ -31,6 +31,10 @@ public class LoginService implements Login {
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
             User user = (User) authentication.getPrincipal();
+            if (user == null) {
+                throw new InvalidCredentialsException();
+            }
+
             String token = tokenService.generateToken(user.getId().toString());
 
             return new LoginResponse(token);

@@ -67,12 +67,10 @@ public class SignupServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionIfUserRespositoryReturnAUser() {
+    void shouldThrowExceptionIfUserRepositoryReturnAUser() {
         when(repository.findByEmail(anyString())).thenReturn(Optional.of(new User()));
 
-        assertThrows(UserAlreadyExistsException.class, () -> {
-            sut.execute(registerUserData);
-        });
+        assertThrows(UserAlreadyExistsException.class, () -> sut.execute(registerUserData));
     }
 
     @Test

@@ -1,19 +1,17 @@
 package com.matheusgondra.books.auth.service;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.matheusgondra.books.cryptography.service.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TokenServiceTest {
-    private final String secretKey = "testSecretKey";
     private TokenService sut;
 
     @BeforeEach
     void setUp() {
+        String secretKey = "testSecretKey";
         sut = new TokenService(secretKey);
     }
 
@@ -24,7 +22,7 @@ public class TokenServiceTest {
         String token = sut.generateToken(payload);
 
         assertNotNull(token);
-        assertTrue(token.split("\\.").length == 3);
+        assertEquals(3, token.split("\\.").length);
     }
 
     @Test
