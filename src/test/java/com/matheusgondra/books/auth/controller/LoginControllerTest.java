@@ -16,6 +16,7 @@ import com.matheusgondra.books.user.repository.UserRepository;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import tools.jackson.databind.ObjectMapper;
 
 public class LoginControllerTest extends BaseIntegrationTest {
@@ -43,11 +44,7 @@ public class LoginControllerTest extends BaseIntegrationTest {
 
     @Test
     void shouldReturn200OnSuccess() {
-        String response = RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(dto))
-                .when()
-                .post("/api/login")
+        String response = createBaseRequest()
                 .then()
                 .statusCode(200)
                 .extract()
@@ -57,5 +54,31 @@ public class LoginControllerTest extends BaseIntegrationTest {
         LoginResponseDTO loginResponse = objectMapper.readValue(response, LoginResponseDTO.class);
 
         assertNotNull(loginResponse.accessToken());
+    }
+
+    @Test
+    void shouldReturn400OnInvalidRequest() {
+        var invalidDTO = new LoginRequestDTO("", "");
+
+        createBaseRequest(invalidDTO)
+                .then()
+                .statusCode(400);
+
+    }
+
+    private Response createBaseRequest() {
+        return RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(objectMapper.writeValueAsString(dto))
+                .when()
+                .post("/api/login");
+    }
+
+    private Response createBaseRequest(LoginRequestDTO dto) {
+        return RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(objectMapper.writeValueAsString(dto))
+                .when()
+                .post("/api/login");
     }
 }
