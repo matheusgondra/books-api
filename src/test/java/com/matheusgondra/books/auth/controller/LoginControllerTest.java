@@ -1,0 +1,70 @@
+package com.matheusgondra.books.auth.controller;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.matheusgondra.books.auth.dto.request.LoginRequestDTO;
+import com.matheusgondra.books.auth.dto.response.LoginResponseDTO;
+import com.matheusgondra.books.config.BaseIntegrationTest;
+import com.matheusgondra.books.cryptography.service.HashService;
+import com.matheusgondra.books.user.model.User;
+import com.matheusgondra.books.user.repository.UserRepository;
+
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import tools.jackson.databind.ObjectMapper;
+
+public class LoginControllerTest extends BaseIntegrationTest {
+    private final String emailMock = "john.doe@gmail.com";
+    private final String passwordMock = "Password@123";
+    private final LoginRequestDTO dto = new LoginRequestDTO(emailMock, passwordMock);
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private HashService hashService;
+
+    @BeforeEach
+    void setup() {
+        String passwordHash = hashService.hash(passwordMock);
+        User user = User.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email(emailMock)
+                .password(passwordHash)
+                .build();
+
+        userRepository.save(user);
+    }
+
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
+    }
+
+    @Test
+    void shouldReturn200OnSuccess() {
+        String response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(objectMapper.writeValueAsString(dto))
+                .when()
+                .post("/api/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .asString();
+
+        LoginResponseDTO loginResponse = objectMapper.readValue(response, LoginResponseDTO.class);
+
+        assertNotNull(loginResponse.accessToken());
+    }
+}
