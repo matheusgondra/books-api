@@ -9,6 +9,7 @@ import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorData
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorResponse;
 import com.matheusgondra.books.exception.AuthorAlreadyExistsException;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class RegisterAuthorService implements RegisterAuthor {
     private final AuthorRepository repository;
 
+    @Transactional
     @Override
     public RegisterAuthorResponse execute(RegisterAuthorData data) {
         repository.findByName(data.name()).ifPresent(author -> {
