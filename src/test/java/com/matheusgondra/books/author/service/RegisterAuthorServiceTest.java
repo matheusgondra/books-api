@@ -1,4 +1,4 @@
-package com.matheusgondra.books.author.usecase;
+package com.matheusgondra.books.author.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

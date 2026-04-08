@@ -1,4 +1,4 @@
-package com.matheusgondra.books.author.usecase;
+package com.matheusgondra.books.author.service;
 
 import org.springframework.stereotype.Service;
 
