@@ -22,7 +22,7 @@ import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorData;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorResponse;
-import com.matheusgondra.books.exception.AuthorAlreadyExistsException;
+import com.matheusgondra.books.author.exception.AuthorAlreadyExistsException;
 import com.matheusgondra.books.factory.AuthorFactory;
 
 @ExtendWith(MockitoExtension.class)

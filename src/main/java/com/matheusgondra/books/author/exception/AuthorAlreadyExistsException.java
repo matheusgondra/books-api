@@ -1,4 +1,4 @@
-package com.matheusgondra.books.exception;
+package com.matheusgondra.books.author.exception;
 
 public class AuthorAlreadyExistsException extends RuntimeException {
     public AuthorAlreadyExistsException() {
