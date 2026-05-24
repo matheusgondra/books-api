@@ -3,9 +3,6 @@ package com.matheusgondra.books.author.service;
 import com.matheusgondra.books.author.exception.AuthorNotFoundException;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LoadAuthorByNameServiceTest {
@@ -42,5 +42,12 @@ class LoadAuthorByNameServiceTest {
         when(authorRepository.findByName(mockAuthorName)).thenReturn(Optional.empty());
 
         assertThrows(AuthorNotFoundException.class, () -> sut.execute(mockAuthorName));
+    }
+
+    @Test
+    void shouldThrowIfRepositoryThrow() {
+        when(authorRepository.findByName(mockAuthorName)).thenThrow(new RuntimeException());
+
+        assertThrows(RuntimeException.class, () -> sut.execute(mockAuthorName));
     }
 }
