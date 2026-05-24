@@ -1,5 +1,6 @@
 package com.matheusgondra.books.author.service;
 
+import com.matheusgondra.books.author.exception.AuthorNotFoundException;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.author.usecase.load.author.LoadAuthorByName;
@@ -13,7 +14,7 @@ public class LoadAuthorByNameService implements LoadAuthorByName {
 
     @Override
     public Author execute(String name) {
-        this.repository.findByName(name);
+        this.repository.findByName(name).orElseThrow(AuthorNotFoundException::new);
         return null;
     }
 }
