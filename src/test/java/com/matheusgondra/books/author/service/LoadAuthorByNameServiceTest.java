@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -49,5 +50,12 @@ class LoadAuthorByNameServiceTest {
         when(authorRepository.findByName(mockAuthorName)).thenThrow(new RuntimeException());
 
         assertThrows(RuntimeException.class, () -> sut.execute(mockAuthorName));
+    }
+
+    @Test
+    void shouldReturnAuthorOnSuccess() {
+        Author result = sut.execute(mockAuthorName);
+
+        assertEquals(Author.class, result.getClass());
     }
 }
