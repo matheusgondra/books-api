@@ -14,7 +14,6 @@ public class LoadAuthorByNameService implements LoadAuthorByName {
 
     @Override
     public Author execute(String name) {
-        this.repository.findByName(name).orElseThrow(AuthorNotFoundException::new);
-        return null;
+        return this.repository.findByName(name).orElseThrow(AuthorNotFoundException::new);
     }
 }
