@@ -1,8 +1,11 @@
 package com.matheusgondra.books.config;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -16,6 +19,9 @@ public abstract class BaseIntegrationTest {
 
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     static {
         postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:15-alpine"));
@@ -34,4 +40,10 @@ public abstract class BaseIntegrationTest {
         RestAssured.port = port;
     }
 
+    @AfterEach
+    void cleanDatabase() {
+        // Limpa as tabelas para garantir um estado limpo no próximo teste.
+        // Ajuste os nomes das tabelas de acordo com a sua migration do Flyway!
+        jdbcTemplate.execute("TRUNCATE TABLE users, authors CASCADE");
+    }
 }
