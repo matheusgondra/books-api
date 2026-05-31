@@ -1,7 +1,12 @@
 api:
   jwt:
     secret: ${JWT_SECRET:mySecretKey}
-    
+
+logging:
+  level:
+    root: INFO
+    com.matheusgondra.books: ${LOG_LEVEL:INFO}
+
 server:
   port: ${PORT:8080}
 

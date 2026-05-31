@@ -34,23 +34,22 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Unauthorized");
 
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            writeUnauthorizedResponse(response, errorResponse);
+            writeUnauthorizedResponse(response);
             return;
         }
 
         String token = authorizationHeader.substring("Bearer ".length()).trim();
-        if (token == null || token.isEmpty()) {
-            writeUnauthorizedResponse(response, errorResponse);
+        if (token.isBlank()) {
+            writeUnauthorizedResponse(response);
             return;
         }
 
         String subject = tokenService.validateToken(token);
         if (subject == null) {
-            writeUnauthorizedResponse(response, errorResponse);
+            writeUnauthorizedResponse(response);
             return;
         }
 
@@ -65,8 +64,10 @@ public class SecurityFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void writeUnauthorizedResponse(HttpServletResponse response, ErrorResponse errorResponse)
+    private void writeUnauthorizedResponse(HttpServletResponse response)
             throws IOException {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Unauthorized");
+
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));

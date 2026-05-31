@@ -1,5 +1,6 @@
 package com.matheusgondra.books.auth.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import com.matheusgondra.books.auth.usecase.login.LoginResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/login")
@@ -23,9 +25,11 @@ public class LoginController {
 
     @PostMapping
     public ResponseEntity<LoginResponseDTO> handle(@RequestBody @Valid LoginRequestDTO dto) {
+        log.debug("DTO: {}", dto);
         LoginData loginData = new LoginData(dto.email(), dto.password());
 
         LoginResponse response = this.useCase.execute(loginData);
+        log.debug("LoginResponse: {}", response);
 
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO(response.token());
 

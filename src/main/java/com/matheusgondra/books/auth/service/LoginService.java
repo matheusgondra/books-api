@@ -25,7 +25,7 @@ public class LoginService implements Login {
     @Override
     public LoginResponse execute(LoginData data) {
         try {
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+            Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
                     data.email(),
                     data.password());
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
