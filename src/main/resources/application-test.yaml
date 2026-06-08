@@ -1,0 +1,14 @@
+api:
+  jwt:
+    secret: testSecretKey
+
+logging:
+    level:
+        root: WARN
+
+spring:
+    main:
+        banner-mode: off
+    web:
+        error:
+            include-stacktrace: never

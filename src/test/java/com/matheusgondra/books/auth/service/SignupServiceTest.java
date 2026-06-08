@@ -13,20 +13,22 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.matheusgondra.books.cryptography.service.HashService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserData;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserResponse;
+import com.matheusgondra.books.cryptography.service.HashService;
 import com.matheusgondra.books.exception.UserAlreadyExistsException;
 import com.matheusgondra.books.user.model.User;
 import com.matheusgondra.books.user.repository.UserRepository;
 
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 public class SignupServiceTest {
     @InjectMocks

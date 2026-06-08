@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -13,6 +14,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import io.restassured.RestAssured;
 
+@ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class BaseIntegrationTest {
     static final PostgreSQLContainer<?> postgres;
@@ -42,8 +44,6 @@ public abstract class BaseIntegrationTest {
 
     @AfterEach
     void cleanDatabase() {
-        // Limpa as tabelas para garantir um estado limpo no próximo teste.
-        // Ajuste os nomes das tabelas de acordo com a sua migration do Flyway!
         jdbcTemplate.execute("TRUNCATE TABLE users, authors CASCADE");
     }
 }

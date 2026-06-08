@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.UUID;
 
-import com.matheusgondra.books.cryptography.service.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,11 +19,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.matheusgondra.books.auth.usecase.login.LoginData;
+import com.matheusgondra.books.cryptography.service.TokenService;
 import com.matheusgondra.books.exception.InvalidCredentialsException;
 import com.matheusgondra.books.user.model.User;
 
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 public class LoginServiceTest {
     @InjectMocks
