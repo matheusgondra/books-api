@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.matheusgondra.books.author.exception.AuthorAlreadyExistsException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +16,7 @@ import com.matheusgondra.books.exception.InvalidCredentialsException;
 import com.matheusgondra.books.exception.UserAlreadyExistsException;
 import com.matheusgondra.books.exception.response.ErrorResponse;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -55,6 +57,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInternalServerError(Exception ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
                 "An unexpected error occurred.");
+
+        log.debug("Exception: {}", ex.getMessage(), ex);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
