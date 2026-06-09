@@ -13,12 +13,14 @@ import tools.jackson.databind.ObjectMapper;
 
 public class RegisterAuthorControllerTest extends BaseIntegrationTest {
 	private final RegisterAuthorRequestDTO dto = new RegisterAuthorRequestDTO("anyAuthor");
+	private final String path = "/api/author/register";
 
 	@Autowired
 	private ObjectMapper objectMapper;
 
 	@Autowired
 	private AuthHelper authHelper;
+
 
 	@Test
 	void shouldReturn201OnSuccess() {
@@ -29,9 +31,31 @@ public class RegisterAuthorControllerTest extends BaseIntegrationTest {
 				.body(objectMapper.writeValueAsString(dto))
 				.header("Authorization", "Bearer " + accessToken)
 				.when()
-				.post("/api/author/register")
+				.post(path)
 				.then()
 				.statusCode(201);
+
+	}
+
+	@Test
+	void shouldReturn409IfAuthorAlreadyExists() {
+		String accessToken = authHelper.getAccessToken();
+
+		RestAssured.given()
+				.contentType(ContentType.JSON)
+				.body(objectMapper.writeValueAsString(dto))
+				.header("Authorization", "Bearer " + accessToken)
+				.when()
+				.post(path);
+
+		RestAssured.given()
+				.contentType(ContentType.JSON)
+				.body(objectMapper.writeValueAsString(dto))
+				.header("Authorization", "Bearer " + accessToken)
+				.when()
+				.post(path)
+				.then()
+				.statusCode(409);
 
 	}
 }
