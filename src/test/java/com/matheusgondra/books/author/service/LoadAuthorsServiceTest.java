@@ -1,7 +1,6 @@
 package com.matheusgondra.books.author.service;
 
-import static org.mockito.Mockito.verify;
-
+import com.matheusgondra.books.author.repository.AuthorRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,7 +9,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.matheusgondra.books.author.repository.AuthorRepository;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -28,5 +29,12 @@ public class LoadAuthorsServiceTest {
         sut.execute(pageable);
 
         verify(repository).findAll(pageable);
+    }
+
+    @Test
+    void shouldThrowIfRepositoryThrow() {
+        when(repository.findAll(pageable)).thenThrow(new RuntimeException());
+
+        assertThrows(RuntimeException.class, () -> sut.execute(pageable));
     }
 }
