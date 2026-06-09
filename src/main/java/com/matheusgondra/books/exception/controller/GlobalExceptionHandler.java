@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.matheusgondra.books.author.exception.AuthorAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,8 +18,8 @@ import com.matheusgondra.books.exception.response.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleConflict(UserAlreadyExistsException ex) {
+    @ExceptionHandler({ UserAlreadyExistsException.class, AuthorAlreadyExistsException.class })
+    public ResponseEntity<ErrorResponse> handleConflict(RuntimeException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
