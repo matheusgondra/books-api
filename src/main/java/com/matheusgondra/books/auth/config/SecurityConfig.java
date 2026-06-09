@@ -30,9 +30,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
-                    for (String endpoint : PublicAuthPaths.PUBLIC_ENDPOINTS) {
-                        auth.requestMatchers(endpoint).permitAll();
-                    }
+                    auth.requestMatchers(PublicAuthPaths.PUBLIC_ENDPOINTS).permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

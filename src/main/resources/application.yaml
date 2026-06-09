@@ -7,6 +7,16 @@ logging:
     root: INFO
     com.matheusgondra.books: ${LOG_LEVEL:INFO}
 
+springdoc:
+  api-docs:
+    path: /api-docs
+
+scalar:
+  path: /docs
+  theme: blue-planet
+  dark-mode: true
+  page-title: Books API Documentation
+
 server:
   port: ${PORT:8080}
 
