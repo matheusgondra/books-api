@@ -13,10 +13,12 @@ import com.matheusgondra.books.auth.usecase.register.user.RegisterUser;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserData;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Tag(name = "Authentication")
 @Slf4j
 @RequiredArgsConstructor
 @RestController

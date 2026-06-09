@@ -13,10 +13,12 @@ import com.matheusgondra.books.author.usecase.register.author.RegisterAuthor;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorData;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Tag(name = "Author")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
