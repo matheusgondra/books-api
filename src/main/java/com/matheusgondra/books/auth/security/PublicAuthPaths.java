@@ -8,7 +8,7 @@ public class PublicAuthPaths {
     public static final String[] PUBLIC_ENDPOINTS = {
             "/api/signup",
             "/api/login",
-            "/api-docs",
+            "/api-docs*",
             "/api-docs/**",
             "/docs",
             "/docs/**",
