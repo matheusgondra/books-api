@@ -1,4 +1,4 @@
-package com.matheusgondra.books.config;
+package com.matheusgondra.books.doc.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
