@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.matheusgondra.books.auth.controller.doc.SignupControllerDoc;
 import com.matheusgondra.books.auth.dto.request.SignupRequestDTO;
 import com.matheusgondra.books.auth.dto.response.SignupResponseDTO;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUser;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SignupController {
     private final RegisterUser useCase;
 
+    @SignupControllerDoc
     @PostMapping
     public ResponseEntity<SignupResponseDTO> handle(@RequestBody @Valid SignupRequestDTO dto) {
         log.debug("DTO: {}", dto);

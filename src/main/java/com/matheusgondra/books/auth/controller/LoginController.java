@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.matheusgondra.books.auth.controller.doc.LoginControllerDoc;
 import com.matheusgondra.books.auth.dto.request.LoginRequestDTO;
 import com.matheusgondra.books.auth.dto.response.LoginResponseDTO;
 import com.matheusgondra.books.auth.usecase.login.Login;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class LoginController {
     private final Login useCase;
 
+    @LoginControllerDoc
     @PostMapping
     public ResponseEntity<LoginResponseDTO> handle(@RequestBody @Valid LoginRequestDTO dto) {
         log.debug("DTO: {}", dto);

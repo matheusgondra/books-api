@@ -26,7 +26,7 @@ public abstract class BaseIntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     static {
-        postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:15-alpine"));
+        postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:16.13-alpine3.23"));
         postgres.start();
     }
 
