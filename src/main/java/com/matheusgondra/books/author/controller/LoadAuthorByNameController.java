@@ -6,13 +6,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.matheusgondra.books.author.controller.doc.LoadAuthorByNameControllerDoc;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.usecase.load.author.LoadAuthorByName;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Author")
 @Slf4j
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LoadAuthorByNameController {
     private final LoadAuthorByName useCase;
 
+    @LoadAuthorByNameControllerDoc
     @GetMapping("{name}")
     public ResponseEntity<Author> handle(@PathVariable String name) {
         log.debug("Receive name: {}", name);

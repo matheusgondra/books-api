@@ -12,12 +12,15 @@ import com.matheusgondra.books.author.dto.response.RegisterAuthorResponseDTO;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthor;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorData;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorResponse;
+import com.matheusgondra.books.author.controller.doc.RegisterAuthorControllerDoc;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Author")
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RegisterAuthorController {
     private final RegisterAuthor useCase;
 
+    @RegisterAuthorControllerDoc
     @PostMapping
     public ResponseEntity<RegisterAuthorResponseDTO> handle(@RequestBody @Valid RegisterAuthorRequestDTO dto) {
         log.debug("DTO: {}", dto);

@@ -9,13 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.matheusgondra.books.author.controller.doc.LoadAuthorsControllerDoc;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.usecase.load.author.LoadAuthors;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Author")
 @Slf4j
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LoadAuthorsController {
     private final LoadAuthors useCase;
 
+    @LoadAuthorsControllerDoc
     @GetMapping
     public ResponseEntity<Page<Author>> handle(
             @RequestParam(required = false, defaultValue = "0") Integer page,
