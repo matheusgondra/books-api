@@ -12,7 +12,12 @@ public class AuthorFactory {
     public static Author create() {
         LocalDateTime now = LocalDateTime.now();
 
-        return new Author(UUID.randomUUID(), "anyName", now, now);
+        return Author.builder()
+                .id(UUID.randomUUID())
+                .name("anyName")
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     }
 
     public static Page<Author> createPage() {
