@@ -1,6 +1,8 @@
 package com.matheusgondra.books.book.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,6 +22,7 @@ import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.model.Book;
 import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.book.usecase.register.RegisterBookData;
+import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
 import com.matheusgondra.books.factory.AuthorFactory;
 import com.matheusgondra.books.factory.BookFactory;
 
@@ -31,7 +34,7 @@ public class RegisterBookServiceTest {
             "1234567890123",
             120);
     private final Author authorMock = AuthorFactory.create();
-    private Book bookMock = BookFactory.create(authorMock);
+    private final Book bookMock = BookFactory.create(authorMock);
 
     @InjectMocks
     private RegisterBookService sut;
@@ -45,6 +48,7 @@ public class RegisterBookServiceTest {
     @BeforeEach
     void setUp() {
         lenient().when(authorRepository.findByName(data.author())).thenReturn(Optional.of(authorMock));
+        lenient().when(bookRepository.save(any(Book.class))).thenReturn(bookMock);
     }
 
     @Test
@@ -66,5 +70,15 @@ public class RegisterBookServiceTest {
         sut.execute(data);
 
         verify(bookRepository).save(bookMock);
+    }
+
+    @Test
+    void shouldReturnRegisterBookResult() {
+        RegisterBookResult result = sut.execute(data);
+
+        assertEquals(bookMock.getTitle(), result.title());
+        assertEquals(bookMock.getAuthor(), result.author());
+        assertEquals(bookMock.getIsbn(), result.isbn());
+        assertEquals(bookMock.getPages(), result.pages());
     }
 }
