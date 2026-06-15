@@ -17,15 +17,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.matheusgondra.books.author.exception.AuthorNotFoundException;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
+import com.matheusgondra.books.book.model.Book;
+import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.book.usecase.register.RegisterBookData;
+import com.matheusgondra.books.factory.AuthorFactory;
+import com.matheusgondra.books.factory.BookFactory;
 
 @ExtendWith(MockitoExtension.class)
 public class RegisterBookServiceTest {
     private final RegisterBookData data = new RegisterBookData(
-            "Book title",
-            "Author name",
+            "anyTitle",
+            "anyName",
             "1234567890123",
             120);
+    private final Author authorMock = AuthorFactory.create();
+    private Book bookMock = BookFactory.create(authorMock);
 
     @InjectMocks
     private RegisterBookService sut;
@@ -33,9 +39,12 @@ public class RegisterBookServiceTest {
     @Mock
     private AuthorRepository authorRepository;
 
+    @Mock
+    private BookRepository bookRepository;
+
     @BeforeEach
     void setUp() {
-        lenient().when(authorRepository.findByName(data.author())).thenReturn(Optional.of(new Author(data.author())));
+        lenient().when(authorRepository.findByName(data.author())).thenReturn(Optional.of(authorMock));
     }
 
     @Test
@@ -50,5 +59,12 @@ public class RegisterBookServiceTest {
         when(authorRepository.findByName(data.author())).thenReturn(Optional.empty());
 
         assertThrows(AuthorNotFoundException.class, () -> sut.execute(data));
+    }
+
+    @Test
+    void shouldCallSaveOnBookRepository() {
+        sut.execute(data);
+
+        verify(bookRepository).save(bookMock);
     }
 }
