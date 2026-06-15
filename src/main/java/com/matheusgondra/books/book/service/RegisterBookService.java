@@ -2,6 +2,7 @@ package com.matheusgondra.books.book.service;
 
 import org.springframework.stereotype.Service;
 
+import com.matheusgondra.books.author.exception.AuthorNotFoundException;
 import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.usecase.register.RegisterBook;
 import com.matheusgondra.books.book.usecase.register.RegisterBookData;
@@ -16,7 +17,7 @@ public class RegisterBookService implements RegisterBook {
 
     @Override
     public RegisterBookResult execute(RegisterBookData data) {
-        this.authorRepository.findByName(data.author());
+        this.authorRepository.findByName(data.author()).orElseThrow(AuthorNotFoundException::new);
 
         return null;
     }
