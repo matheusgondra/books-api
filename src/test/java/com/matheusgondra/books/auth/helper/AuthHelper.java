@@ -13,33 +13,33 @@ import tools.jackson.databind.ObjectMapper;
 @Component
 @RequiredArgsConstructor
 public class AuthHelper {
-    private final ObjectMapper objectMapper;
+        private final ObjectMapper objectMapper;
 
-    public String getAccessToken() {
-        var signupDTO = new SignupRequestDTO("john", "doe", "john@mail.com", "Password@123");
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(signupDTO))
-                .when()
-                .post("/api/signup")
-                .then()
-                .statusCode(201);
+        public String getAccessToken() {
+                var signupDTO = new SignupRequestDTO("john", "doe", "john@mail.com", "Password@123");
+                RestAssured.given()
+                                .contentType(ContentType.JSON)
+                                .body(objectMapper.writeValueAsString(signupDTO))
+                                .when()
+                                .post("/api/signup")
+                                .then()
+                                .statusCode(201);
 
-        var loginDTO = new LoginRequestDTO(signupDTO.email(), signupDTO.password());
-        String loginResponse = RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(loginDTO))
-                .when()
-                .post("/api/login")
-                .then()
-                .statusCode(200)
-                .extract()
-                .response()
-                .asString();
+                var loginDTO = new LoginRequestDTO(signupDTO.email(), signupDTO.password());
+                String loginResponse = RestAssured.given()
+                                .contentType(ContentType.JSON)
+                                .body(objectMapper.writeValueAsString(loginDTO))
+                                .when()
+                                .post("/api/login")
+                                .then()
+                                .statusCode(200)
+                                .extract()
+                                .response()
+                                .asString();
 
-        String accessToken = objectMapper.readTree(loginResponse)
-                .get("access_token")
-                .asString();
-        return accessToken;
-    }
+                String accessToken = objectMapper.readTree(loginResponse)
+                                .get("accessToken")
+                                .asString();
+                return accessToken;
+        }
 }

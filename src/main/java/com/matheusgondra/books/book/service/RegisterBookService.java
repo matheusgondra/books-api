@@ -31,8 +31,15 @@ public class RegisterBookService implements RegisterBook {
                 .pages(data.pages())
                 .author(author)
                 .build();
-        this.bookRepository.save(book);
+        book = this.bookRepository.save(book);
 
-        return null;
+        return new RegisterBookResult(
+                book.getId(),
+                book.getTitle(),
+                book.getAuthor(),
+                book.getIsbn(),
+                book.getPages(),
+                book.getCreatedAt(),
+                book.getUpdatedAt());
     }
 }
