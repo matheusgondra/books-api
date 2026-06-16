@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.matheusgondra.books.exception.BookAlreadyExistsException;
 import com.matheusgondra.books.exception.InvalidCredentialsException;
 import com.matheusgondra.books.exception.UserAlreadyExistsException;
 import com.matheusgondra.books.exception.response.ErrorResponse;
@@ -20,7 +21,11 @@ import com.matheusgondra.books.exception.response.ValidationFieldErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({ UserAlreadyExistsException.class, AuthorAlreadyExistsException.class })
+    @ExceptionHandler({
+            UserAlreadyExistsException.class,
+            AuthorAlreadyExistsException.class,
+            BookAlreadyExistsException.class
+    })
     public ResponseEntity<ErrorResponse> handleConflict(RuntimeException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
 
