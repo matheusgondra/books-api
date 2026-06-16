@@ -23,6 +23,7 @@ import com.matheusgondra.books.book.model.Book;
 import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.book.usecase.register.RegisterBookData;
 import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
+import com.matheusgondra.books.exception.BookAlreadyExistsException;
 import com.matheusgondra.books.factory.AuthorFactory;
 import com.matheusgondra.books.factory.BookFactory;
 
@@ -63,6 +64,13 @@ public class RegisterBookServiceTest {
         when(authorRepository.findByName(data.author())).thenReturn(Optional.empty());
 
         assertThrows(AuthorNotFoundException.class, () -> sut.execute(data));
+    }
+
+    @Test
+    void shouldThrowBookAlreadyExistsOnDuplicateIsbn() {
+        when(bookRepository.findByIsbn(data.isbn())).thenReturn(Optional.of(bookMock));
+
+        assertThrows(BookAlreadyExistsException.class, () -> sut.execute(data));
     }
 
     @Test
