@@ -1,8 +1,6 @@
 package com.matheusgondra.books.exception.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.matheusgondra.books.author.exception.AuthorAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.matheusgondra.books.exception.InvalidCredentialsException;
 import com.matheusgondra.books.exception.UserAlreadyExistsException;
 import com.matheusgondra.books.exception.response.ErrorResponse;
+import com.matheusgondra.books.exception.response.ValidationErrorResponse;
+import com.matheusgondra.books.exception.response.ValidationFieldErrorResponse;
 
 @Slf4j
 @RestControllerAdvice
@@ -28,20 +28,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleBadRequest(MethodArgumentNotValidException ex) {
-        List<Map<String, String>> errors = ex.getBindingResult().getFieldErrors().stream()
-                .map(fieldError -> {
-                    Map<String, String> error = new HashMap<>();
-                    String snakeCaseField = fieldError.getField()
-                            .replaceAll("([a-z])([A-Z])+", "$1_$2")
-                            .toLowerCase();
-                    error.put("field", snakeCaseField);
-                    error.put("message", fieldError.getDefaultMessage());
-                    return error;
-                })
+    public ResponseEntity<ValidationErrorResponse> handleBadRequest(MethodArgumentNotValidException ex) {
+        List<ValidationFieldErrorResponse> errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(ValidationFieldErrorResponse::new)
                 .toList();
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, errors.toString());
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(HttpStatus.BAD_REQUEST,
+                "Validation failed", errors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
