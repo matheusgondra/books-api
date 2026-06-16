@@ -70,6 +70,17 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
     }
 
     @Test
+    void shouldReturn401OnUnauthorized() {
+        RestAssured.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(dto))
+                .when()
+                .post(path)
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
     void shouldReturn400OnInvalidRequest() {
         RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
