@@ -10,6 +10,7 @@ import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.book.usecase.register.RegisterBook;
 import com.matheusgondra.books.book.usecase.register.RegisterBookData;
 import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
+import com.matheusgondra.books.exception.BookAlreadyExistsException;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,10 @@ public class RegisterBookService implements RegisterBook {
     @Override
     public RegisterBookResult execute(RegisterBookData data) {
         Author author = this.authorRepository.findByName(data.author()).orElseThrow(AuthorNotFoundException::new);
+
+        this.bookRepository.findByIsbn(data.isbn()).ifPresent(book -> {
+            throw new BookAlreadyExistsException();
+        });
 
         Book book = Book.builder()
                 .title(data.title())
