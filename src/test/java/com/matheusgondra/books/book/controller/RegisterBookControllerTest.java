@@ -70,6 +70,29 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
     }
 
     @Test
+    void shouldReturn409OnDuplicateISBN() {
+        RestAssured.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(objectMapper.writeValueAsString(dto))
+                .when()
+                .post(path)
+                .then()
+                .statusCode(201);
+
+        RestAssured.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(objectMapper.writeValueAsString(dto))
+                .when()
+                .post(path)
+                .then()
+                .statusCode(409)
+                .body("status", equalTo(409))
+                .body("message", equalTo("A book with the same ISBN already exists."));
+    }
+
+    @Test
     void shouldReturn401OnUnauthorized() {
         RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
