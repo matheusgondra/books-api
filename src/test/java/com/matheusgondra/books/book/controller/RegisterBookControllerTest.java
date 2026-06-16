@@ -1,6 +1,8 @@
 package com.matheusgondra.books.book.controller;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +25,14 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
             "anyAuthor",
             "123456789",
             120);
+    private final RegisterBookRequestDTO invalidDto = new RegisterBookRequestDTO(
+            "anyTitle",
+            "anyAuthor",
+            "",
+            1);
     private final String path = "/api/book/register";
+
+    private String accessToken;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -36,12 +45,12 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        accessToken = authHelper.getAccessToken();
         authorRepository.save(new Author("anyAuthor"));
     }
 
     @Test
     void shouldReturn201OnSuccess() {
-        String accessToken = authHelper.getAccessToken();
 
         RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -58,5 +67,22 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
                 .body("pages", equalTo(dto.pages()))
                 .body("createdAt", notNullValue())
                 .body("updatedAt", notNullValue());
+    }
+
+    @Test
+    void shouldReturn400OnInvalidRequest() {
+        RestAssured.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(objectMapper.writeValueAsString(invalidDto))
+                .when()
+                .post(path)
+                .then()
+                .statusCode(400)
+                .body("status", equalTo(400))
+                .body("message", equalTo("Validation failed"))
+                .body("errors", hasSize(2))
+                .body("errors.field", containsInAnyOrder("isbn", "pages"))
+                .body("errors.message", hasSize(2));
     }
 }
