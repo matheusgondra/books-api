@@ -7,20 +7,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.matheusgondra.books.author.controller.doc.RegisterAuthorControllerDoc;
 import com.matheusgondra.books.author.dto.request.RegisterAuthorRequestDTO;
 import com.matheusgondra.books.author.dto.response.RegisterAuthorResponseDTO;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthor;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorData;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorResponse;
-import com.matheusgondra.books.author.controller.doc.RegisterAuthorControllerDoc;
+import com.matheusgondra.books.doc.annotation.SecurityJWT;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@SecurityRequirement(name = "bearerAuth")
+@SecurityJWT
 @Tag(name = "Author")
 @Slf4j
 @RequiredArgsConstructor

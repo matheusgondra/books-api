@@ -25,6 +25,7 @@ public class OpenAPIConfig {
                 .info(info)
                 .addTagsItem(createAuthTag())
                 .addTagsItem(createAuthorTag())
+                .addTagsItem(createBookTag())
                 .components(securityComponent);
     }
 
@@ -38,6 +39,12 @@ public class OpenAPIConfig {
         return new Tag()
                 .name("Author")
                 .description("Endpoints for managing authors.");
+    }
+
+    private Tag createBookTag() {
+        return new Tag()
+                .name("Book")
+                .description("Endpoints for managing books.");
     }
 
     private SecurityScheme createSecurityScheme() {

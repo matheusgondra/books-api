@@ -6,16 +6,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.matheusgondra.books.book.controller.doc.RegisterBookControllerDoc;
 import com.matheusgondra.books.book.dto.request.RegisterBookRequestDTO;
 import com.matheusgondra.books.book.dto.response.RegisterBookResponseDTO;
 import com.matheusgondra.books.book.usecase.register.RegisterBook;
 import com.matheusgondra.books.book.usecase.register.RegisterBookData;
 import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
+import com.matheusgondra.books.doc.annotation.SecurityJWT;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@SecurityJWT
+@Tag(name = "Book")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -23,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RegisterBookController {
     private final RegisterBook useCase;
 
+    @RegisterBookControllerDoc
     @PostMapping
     public ResponseEntity<RegisterBookResponseDTO> handle(@RequestBody @Valid RegisterBookRequestDTO dto) {
         log.debug("DTO: {}", dto);

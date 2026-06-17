@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.matheusgondra.books.author.controller.doc.LoadAuthorByNameControllerDoc;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.usecase.load.author.LoadAuthorByName;
+import com.matheusgondra.books.doc.annotation.SecurityJWT;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@SecurityRequirement(name = "bearerAuth")
+@SecurityJWT
 @Tag(name = "Author")
 @Slf4j
 @RequiredArgsConstructor
