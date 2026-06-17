@@ -17,8 +17,6 @@ public class LoadBooksService implements LoadBooks {
 
     @Override
     public Page<BookDetails> execute(Pageable pageable) {
-        this.repository.findAll(pageable);
-
-        return null;
+        return this.repository.findAll(pageable).map(BookDetails::new);
     }
 }
