@@ -59,6 +59,7 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
                 .body("totalElements", equalTo(3))
                 .body("totalPages", equalTo(2))
                 .body("size", equalTo(2))
+                .body("content.size()", equalTo(2))
                 .body("content[0].id", notNullValue())
                 .body("content[0].title", equalTo("anyTitle"))
                 .body("content[0].isbn", equalTo("1234567890123"))
@@ -66,6 +67,24 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
                 .body("content[0].author", equalTo("anyName"))
                 .body("content[0].createdAt", notNullValue())
                 .body("content[0].updatedAt", notNullValue());
+    }
+
+    @Test
+    void shouldReturnEmptyPageWhenNoBooks() {
+        bookRepository.deleteAll();
+
+        RestAssured.given()
+                .header("Authorization", "Bearer " + accessToken)
+                .queryParam("page", 0)
+                .queryParam("size", 2)
+                .when()
+                .get(path)
+                .then()
+                .statusCode(200)
+                .body("totalElements", equalTo(0))
+                .body("totalPages", equalTo(0))
+                .body("size", equalTo(2))
+                .body("content", equalTo(List.of()));
     }
 
     private void registerBooks() {
