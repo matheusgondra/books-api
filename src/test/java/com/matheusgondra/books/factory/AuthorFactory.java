@@ -20,6 +20,16 @@ public class AuthorFactory {
                 .build();
     }
 
+    public static Author createWithoutId() {
+        LocalDateTime now = LocalDateTime.now();
+
+        return Author.builder()
+                .name("anyName")
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
+    }
+
     public static Page<Author> createPage() {
         List<Author> authors = List.of(create(), create(), create());
 

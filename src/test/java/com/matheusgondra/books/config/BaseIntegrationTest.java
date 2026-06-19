@@ -44,6 +44,6 @@ public abstract class BaseIntegrationTest {
 
     @AfterEach
     void cleanDatabase() {
-        jdbcTemplate.execute("TRUNCATE TABLE users, authors CASCADE");
+        jdbcTemplate.execute("TRUNCATE TABLE users, authors, books CASCADE");
     }
 }

@@ -33,6 +33,15 @@ public class BookFactory {
                 .build();
     }
 
+    public static Book create(Author author, String isbn) {
+        return Book.builder()
+                .title("anyTitle")
+                .isbn(isbn)
+                .pages(120)
+                .author(author)
+                .build();
+    }
+
     public static Page<Book> createPage() {
         List<Book> books = List.of(create(true), create(true), create(true));
 
