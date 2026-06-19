@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.matheusgondra.books.author.controller.doc.LoadAuthorByNameControllerDoc;
+import com.matheusgondra.books.author.dto.AuthorDetails;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.usecase.load.author.LoadAuthorByName;
 import com.matheusgondra.books.doc.annotation.SecurityJWT;
@@ -26,13 +27,15 @@ public class LoadAuthorByNameController {
 
     @LoadAuthorByNameControllerDoc
     @GetMapping("{name}")
-    public ResponseEntity<Author> handle(@PathVariable String name) {
+    public ResponseEntity<AuthorDetails> handle(@PathVariable String name) {
         log.debug("Receive name: {}", name);
 
         Author result = this.useCase.execute(name);
 
         log.debug("Use case result: {}", result);
 
-        return ResponseEntity.ok(result);
+        AuthorDetails response = new AuthorDetails(result);
+
+        return ResponseEntity.ok(response);
     }
 }

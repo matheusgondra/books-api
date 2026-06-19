@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.matheusgondra.books.author.controller.doc.LoadAuthorsControllerDoc;
+import com.matheusgondra.books.author.dto.AuthorDetails;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.usecase.load.author.LoadAuthors;
 import com.matheusgondra.books.doc.annotation.SecurityJWT;
@@ -29,14 +30,15 @@ public class LoadAuthorsController {
 
     @LoadAuthorsControllerDoc
     @GetMapping
-    public ResponseEntity<Page<Author>> handle(
+    public ResponseEntity<Page<AuthorDetails>> handle(
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size) {
         log.debug("Receive page {} and size {}", page, size);
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Author> result = this.useCase.execute(pageable);
+        Page<AuthorDetails> response = result.map(AuthorDetails::new);
 
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(response);
     }
 }
