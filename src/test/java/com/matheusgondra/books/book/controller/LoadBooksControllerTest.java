@@ -87,6 +87,19 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
                 .body("content", equalTo(List.of()));
     }
 
+    @Test
+    void shouldReturn401WhenNoAccessToken() {
+        RestAssured.given()
+                .queryParam("page", 0)
+                .queryParam("size", 2)
+                .when()
+                .get(path)
+                .then()
+                .statusCode(401)
+                .body("message", equalTo("Unauthorized"))
+                .body("status", equalTo(401));
+    }
+
     private void registerBooks() {
         Author savedAuthor = authorRepository.save(author);
 
