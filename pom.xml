@@ -200,7 +200,6 @@
 				</configuration>
 			</plugin>
 
-			<!-- Plugin para instalar automaticamente os git hooks da pasta /hooks para .git/hooks -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
