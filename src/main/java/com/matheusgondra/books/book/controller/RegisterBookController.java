@@ -18,6 +18,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @SecurityJWT
 @Tag(name = "Book")
@@ -38,6 +41,12 @@ public class RegisterBookController {
 
         log.debug("UseCase result: {}", result);
 
-        return ResponseEntity.created(null).body(new RegisterBookResponseDTO(result));
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("{id}")
+                .buildAndExpand(result.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(new RegisterBookResponseDTO(result));
     }
 }
