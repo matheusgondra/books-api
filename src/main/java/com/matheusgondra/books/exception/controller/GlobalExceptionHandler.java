@@ -3,6 +3,7 @@ package com.matheusgondra.books.exception.controller;
 import java.util.List;
 
 import com.matheusgondra.books.author.exception.AuthorAlreadyExistsException;
+import com.matheusgondra.books.exception.BookNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
             BookAlreadyExistsException.class
     })
     public ResponseEntity<ErrorResponse> handleConflict(RuntimeException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
+        ErrorResponse errorResponse = ErrorResponse.conflict(ex);
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
@@ -44,17 +45,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(BookNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(BookNotFoundException ex) {
+        ErrorResponse errorResponse = ErrorResponse.notFound(ex);
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorized(InvalidCredentialsException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        ErrorResponse errorResponse = ErrorResponse.unauthorized(ex);
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleInternalServerError(Exception ex) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                "An unexpected error occurred.");
+        ErrorResponse errorResponse = ErrorResponse.serverError();
 
         log.error("Exception: {}", ex.getMessage(), ex);
 
