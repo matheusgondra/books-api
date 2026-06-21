@@ -2,6 +2,7 @@ package com.matheusgondra.books.book.service;
 
 import java.util.UUID;
 
+import com.matheusgondra.books.book.model.Book;
 import org.springframework.stereotype.Service;
 
 import com.matheusgondra.books.book.dto.BookDetails;
@@ -18,8 +19,8 @@ public class LoadBookByIdService implements LoadBookById {
 
     @Override
     public BookDetails execute(UUID id) {
-        this.repository.findById(id).orElseThrow(BookNotFoundException::new);
+        Book book = this.repository.findWithAuthorById(id).orElseThrow(BookNotFoundException::new);
 
-        return null;
+        return new BookDetails(book);
     }
 }
