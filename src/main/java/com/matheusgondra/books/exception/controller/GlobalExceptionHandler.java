@@ -3,6 +3,7 @@ package com.matheusgondra.books.exception.controller;
 import java.util.List;
 
 import com.matheusgondra.books.author.exception.AuthorAlreadyExistsException;
+import com.matheusgondra.books.author.exception.AuthorNotFoundException;
 import com.matheusgondra.books.exception.BookNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -45,8 +46,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(BookNotFoundException ex) {
+    @ExceptionHandler({ BookNotFoundException.class, AuthorNotFoundException.class })
+    public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException ex) {
         ErrorResponse errorResponse = ErrorResponse.notFound(ex);
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
