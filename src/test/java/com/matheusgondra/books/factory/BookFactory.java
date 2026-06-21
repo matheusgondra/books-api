@@ -18,12 +18,6 @@ public class BookFactory {
                 .build();
     }
 
-    public static Book create(boolean withAuthor) {
-        Author author = AuthorFactory.create();
-
-        return create(author);
-    }
-
     public static Book create(Author author) {
         return Book.builder()
                 .title("anyTitle")
@@ -42,8 +36,14 @@ public class BookFactory {
                 .build();
     }
 
+    public static Book createWithAuthor() {
+        Author author = AuthorFactory.create();
+
+        return create(author);
+    }
+
     public static Page<Book> createPage() {
-        List<Book> books = List.of(create(true), create(true), create(true));
+        List<Book> books = List.of(createWithAuthor(), createWithAuthor(), createWithAuthor());
 
         return new PageImpl<>(books);
     }
