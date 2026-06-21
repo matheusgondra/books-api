@@ -1,0 +1,66 @@
+#!/bin/sh
+
+# Redirect output to stderr
+exec 1>&2
+
+# Color definitions for better messages
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+echo -e "${CYAN}=================================================${NC}"
+echo -e "${CYAN}             Running pre-commit hooks            ${NC}"
+echo -e "${CYAN}=================================================${NC}\n"
+
+# 1. Check code formatting with Spotless
+echo -e "➔ ${YELLOW}Checking code format with Spotless...${NC}"
+# Using Maven Wrapper (mvnw) and hiding verbose logs on success
+if ./mvnw spotless:check > /dev/null 2>&1; then
+  echo -e "${GREEN}✓ Code is properly formatted!${NC}\n"
+else
+  echo -e "${RED}✗ Spotless check failed! The code has formatting errors.${NC}"
+  echo -e "${YELLOW}  Please run the command: ${NC}./mvnw spotless:apply${YELLOW} and commit again.${NC}\n"
+  exit 1
+fi
+
+# 2. Find modified Java files (added, copied, modified) that are staged
+echo -e "➔ ${YELLOW}Looking for modified Java files to run tests...${NC}"
+STAGED_JAVA_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.java$' || true)
+
+if [ -z "$STAGED_JAVA_FILES" ]; then
+  echo -e "${GREEN}✓ No Java files were modified. Skipping tests.${NC}\n"
+  exit 0
+fi
+
+# Extract class names to pass to Maven
+TEST_CLASSES=""
+for FILE in $STAGED_JAVA_FILES; do
+  # Get just the filename without the extension (e.g., Controller.java -> Controller)
+  FILENAME=$(basename -- "$FILE")
+  CLASSNAME="${FILENAME%.*}"
+
+  if [ -z "$TEST_CLASSES" ]; then
+    TEST_CLASSES="*$CLASSNAME*"
+  else
+    TEST_CLASSES="$TEST_CLASSES,*$CLASSNAME*"
+  fi
+done
+
+echo -e "  ${CYAN}Classes identified for testing:${NC} ${TEST_CLASSES}"
+
+# 3. Run tests only for the affected classes
+# We use failIfNoTests=false in case a domain class doesn't have a test with its name
+if ./mvnw test -Dtest="$TEST_CLASSES" -DfailIfNoTests=false; then
+  echo -e "\n${GREEN}✓ Tests passed successfully!${NC}\n"
+else
+  echo -e "\n${RED}✗ Tests failed!${NC}"
+  echo -e "${YELLOW}  Check the log above, fix the broken tests for the modified files, and try again.${NC}\n"
+  exit 1
+fi
+
+echo -e "${GREEN}=================================================${NC}"
+echo -e "${GREEN}      Pre-commit finished successfully! 🎉       ${NC}"
+echo -e "${GREEN}=================================================${NC}\n"
+exit 0

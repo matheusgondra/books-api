@@ -199,6 +199,31 @@
 					</java>
 				</configuration>
 			</plugin>
+
+			<!-- Plugin para instalar automaticamente os git hooks da pasta /hooks para .git/hooks -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>install-git-hooks</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo message="Installing Git Hooks..."/>
+								<copy todir="${project.basedir}/.git/hooks" overwrite="true">
+									<fileset dir="${project.basedir}/hooks"/>
+								</copy>
+								<chmod dir="${project.basedir}/.git/hooks" perm="a+x" includes="*"/>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
