@@ -25,11 +25,6 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
             "anyAuthor",
             "123456789",
             120);
-    private final RegisterBookRequestDTO invalidDto = new RegisterBookRequestDTO(
-            "anyTitle",
-            "anyAuthor",
-            "",
-            1);
     private final String path = "/api/book/register";
 
     private String accessToken;
@@ -70,6 +65,21 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
     }
 
     @Test
+    void shouldReturn404WhenAuthorNotExists() {
+        authorRepository.deleteAll();
+
+        RestAssured.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(objectMapper.writeValueAsString(dto))
+                .when()
+                .post(path)
+                .then()
+                .statusCode(404)
+                .body("message", equalTo("Author not found"));
+    }
+
+    @Test
     void shouldReturn409OnDuplicateISBN() {
         RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -105,6 +115,12 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
 
     @Test
     void shouldReturn400OnInvalidRequest() {
+        final RegisterBookRequestDTO invalidDto = new RegisterBookRequestDTO(
+                "anyTitle",
+                "anyAuthor",
+                "",
+                1);
+
         RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
