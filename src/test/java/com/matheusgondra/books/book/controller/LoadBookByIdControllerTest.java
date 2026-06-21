@@ -1,5 +1,8 @@
 package com.matheusgondra.books.book.controller;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+
 import com.matheusgondra.books.auth.helper.AuthHelper;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
@@ -8,14 +11,10 @@ import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.config.BaseIntegrationTest;
 import com.matheusgondra.books.factory.BookFactory;
 import io.restassured.RestAssured;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-
-import java.util.UUID;
-
 
 class LoadBookByIdControllerTest extends BaseIntegrationTest {
     private final String path = "/api/book/";
@@ -57,12 +56,7 @@ class LoadBookByIdControllerTest extends BaseIntegrationTest {
 
     @Test
     void shouldReturn401WhenNoAccessToken() {
-        RestAssured.given()
-                .when()
-                .get(path + id)
-                .then()
-                .statusCode(401)
-                .body("message", equalTo("Unauthorized"));
+        RestAssured.given().when().get(path + id).then().statusCode(401).body("message", equalTo("Unauthorized"));
     }
 
     @Test

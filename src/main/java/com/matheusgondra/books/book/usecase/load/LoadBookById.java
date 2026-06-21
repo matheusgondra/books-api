@@ -1,8 +1,7 @@
 package com.matheusgondra.books.book.usecase.load;
 
-import java.util.UUID;
-
 import com.matheusgondra.books.book.dto.BookDetails;
+import java.util.UUID;
 
 public interface LoadBookById {
     BookDetails execute(UUID id);

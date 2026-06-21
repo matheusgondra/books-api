@@ -1,16 +1,13 @@
 package com.matheusgondra.books.book.service;
 
-import java.util.UUID;
-
-import com.matheusgondra.books.book.model.Book;
-import org.springframework.stereotype.Service;
-
 import com.matheusgondra.books.book.dto.BookDetails;
+import com.matheusgondra.books.book.model.Book;
 import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.book.usecase.load.LoadBookById;
 import com.matheusgondra.books.exception.BookNotFoundException;
-
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service

@@ -1,11 +1,5 @@
 package com.matheusgondra.books.book.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.matheusgondra.books.book.controller.doc.RegisterBookControllerDoc;
 import com.matheusgondra.books.book.dto.request.RegisterBookRequestDTO;
 import com.matheusgondra.books.book.dto.response.RegisterBookResponseDTO;
@@ -13,14 +7,17 @@ import com.matheusgondra.books.book.usecase.register.RegisterBook;
 import com.matheusgondra.books.book.usecase.register.RegisterBookData;
 import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
 import com.matheusgondra.books.doc.annotation.SecurityJWT;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
 
 @SecurityJWT
 @Tag(name = "Book")
@@ -41,8 +38,7 @@ public class RegisterBookController {
 
         log.debug("UseCase result: {}", result);
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("{id}")
                 .buildAndExpand(result.id())
                 .toUri();

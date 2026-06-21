@@ -7,15 +7,6 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import com.matheusgondra.books.author.exception.AuthorNotFoundException;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
@@ -26,14 +17,17 @@ import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
 import com.matheusgondra.books.exception.BookAlreadyExistsException;
 import com.matheusgondra.books.factory.AuthorFactory;
 import com.matheusgondra.books.factory.BookFactory;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class RegisterBookServiceTest {
-    private final RegisterBookData data = new RegisterBookData(
-            "anyTitle",
-            "anyName",
-            "1234567890123",
-            120);
+    private final RegisterBookData data = new RegisterBookData("anyTitle", "anyName", "1234567890123", 120);
     private final Author authorMock = AuthorFactory.create();
     private final Book bookMock = BookFactory.create(authorMock);
 

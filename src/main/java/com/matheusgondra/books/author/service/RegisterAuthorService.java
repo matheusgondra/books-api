@@ -1,16 +1,14 @@
 package com.matheusgondra.books.author.service;
 
-import org.springframework.stereotype.Service;
-
+import com.matheusgondra.books.author.exception.AuthorAlreadyExistsException;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthor;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorData;
 import com.matheusgondra.books.author.usecase.register.author.RegisterAuthorResponse;
-import com.matheusgondra.books.author.exception.AuthorAlreadyExistsException;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
@@ -29,9 +27,6 @@ public class RegisterAuthorService implements RegisterAuthor {
         author = repository.save(author);
 
         return new RegisterAuthorResponse(
-                author.getId(),
-                author.getName(),
-                author.getCreatedAt(),
-                author.getUpdatedAt());
+                author.getId(), author.getName(), author.getCreatedAt(), author.getUpdatedAt());
     }
 }

@@ -1,7 +1,5 @@
 package com.matheusgondra.books.book.service;
 
-import org.springframework.stereotype.Service;
-
 import com.matheusgondra.books.author.exception.AuthorNotFoundException;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
@@ -11,9 +9,9 @@ import com.matheusgondra.books.book.usecase.register.RegisterBook;
 import com.matheusgondra.books.book.usecase.register.RegisterBookData;
 import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
 import com.matheusgondra.books.exception.BookAlreadyExistsException;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service

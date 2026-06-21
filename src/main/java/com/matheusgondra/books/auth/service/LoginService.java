@@ -1,19 +1,17 @@
 package com.matheusgondra.books.auth.service;
 
+import com.matheusgondra.books.auth.usecase.login.Login;
+import com.matheusgondra.books.auth.usecase.login.LoginData;
+import com.matheusgondra.books.auth.usecase.login.LoginResponse;
 import com.matheusgondra.books.cryptography.service.TokenService;
+import com.matheusgondra.books.exception.InvalidCredentialsException;
+import com.matheusgondra.books.user.model.User;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
-import com.matheusgondra.books.auth.usecase.login.Login;
-import com.matheusgondra.books.auth.usecase.login.LoginData;
-import com.matheusgondra.books.auth.usecase.login.LoginResponse;
-import com.matheusgondra.books.exception.InvalidCredentialsException;
-import com.matheusgondra.books.user.model.User;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,9 +23,7 @@ public class LoginService implements Login {
     @Override
     public LoginResponse execute(LoginData data) {
         try {
-            Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
-                    data.email(),
-                    data.password());
+            Authentication authenticationToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
             User user = (User) authentication.getPrincipal();

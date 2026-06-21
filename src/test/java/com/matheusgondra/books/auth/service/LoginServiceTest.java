@@ -8,8 +8,11 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.matheusgondra.books.auth.usecase.login.LoginData;
+import com.matheusgondra.books.cryptography.service.TokenService;
+import com.matheusgondra.books.exception.InvalidCredentialsException;
+import com.matheusgondra.books.user.model.User;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,11 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-
-import com.matheusgondra.books.auth.usecase.login.LoginData;
-import com.matheusgondra.books.cryptography.service.TokenService;
-import com.matheusgondra.books.exception.InvalidCredentialsException;
-import com.matheusgondra.books.user.model.User;
 
 @ExtendWith(MockitoExtension.class)
 public class LoginServiceTest {
@@ -50,7 +48,8 @@ public class LoginServiceTest {
 
         lenient().when(authMock.getPrincipal()).thenReturn(user);
         lenient().when(user.getId()).thenReturn(UUID.randomUUID());
-        lenient().when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+        lenient()
+                .when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authMock);
         lenient().when(tokenService.generateToken(anyString())).thenReturn("anyToken");
     }

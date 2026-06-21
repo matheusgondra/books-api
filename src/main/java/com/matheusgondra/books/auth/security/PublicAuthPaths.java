@@ -6,14 +6,14 @@ public class PublicAuthPaths {
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     public static final String[] PUBLIC_ENDPOINTS = {
-            "/api/signup",
-            "/api/login",
-            "/api-docs*",
-            "/api-docs/**",
-            "/docs",
-            "/docs/**",
-            "/**/favicon.svg",
-            "/**/favicon.ico"
+        "/api/signup",
+        "/api/login",
+        "/api-docs*",
+        "/api-docs/**",
+        "/docs",
+        "/docs/**",
+        "/**/favicon.svg",
+        "/**/favicon.ico"
     };
 
     public static boolean isPublicRoute(String route) {

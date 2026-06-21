@@ -1,10 +1,15 @@
 package com.matheusgondra.books.exception.controller;
 
-import java.util.List;
-
 import com.matheusgondra.books.author.exception.AuthorAlreadyExistsException;
 import com.matheusgondra.books.author.exception.AuthorNotFoundException;
+import com.matheusgondra.books.exception.BookAlreadyExistsException;
 import com.matheusgondra.books.exception.BookNotFoundException;
+import com.matheusgondra.books.exception.InvalidCredentialsException;
+import com.matheusgondra.books.exception.UserAlreadyExistsException;
+import com.matheusgondra.books.exception.response.ErrorResponse;
+import com.matheusgondra.books.exception.response.ValidationErrorResponse;
+import com.matheusgondra.books.exception.response.ValidationFieldErrorResponse;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,21 +17,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.matheusgondra.books.exception.BookAlreadyExistsException;
-import com.matheusgondra.books.exception.InvalidCredentialsException;
-import com.matheusgondra.books.exception.UserAlreadyExistsException;
-import com.matheusgondra.books.exception.response.ErrorResponse;
-import com.matheusgondra.books.exception.response.ValidationErrorResponse;
-import com.matheusgondra.books.exception.response.ValidationFieldErrorResponse;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({
-            UserAlreadyExistsException.class,
-            AuthorAlreadyExistsException.class,
-            BookAlreadyExistsException.class
+        UserAlreadyExistsException.class,
+        AuthorAlreadyExistsException.class,
+        BookAlreadyExistsException.class
     })
     public ResponseEntity<ErrorResponse> handleConflict(RuntimeException ex) {
         ErrorResponse errorResponse = ErrorResponse.conflict(ex);
@@ -40,13 +38,13 @@ public class GlobalExceptionHandler {
                 .map(ValidationFieldErrorResponse::new)
                 .toList();
 
-        ValidationErrorResponse errorResponse = new ValidationErrorResponse(HttpStatus.BAD_REQUEST,
-                "Validation failed", errors);
+        ValidationErrorResponse errorResponse =
+                new ValidationErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", errors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    @ExceptionHandler({ BookNotFoundException.class, AuthorNotFoundException.class })
+    @ExceptionHandler({BookNotFoundException.class, AuthorNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException ex) {
         ErrorResponse errorResponse = ErrorResponse.notFound(ex);
 

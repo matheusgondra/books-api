@@ -1,9 +1,8 @@
 package com.matheusgondra.books.book.dto;
 
+import com.matheusgondra.books.book.model.Book;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import com.matheusgondra.books.book.model.Book;
 
 public record BookDetails(
         UUID id,

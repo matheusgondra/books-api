@@ -1,18 +1,17 @@
 package com.matheusgondra.books.author.controller;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+
 import com.matheusgondra.books.auth.helper.AuthHelper;
 import com.matheusgondra.books.author.dto.request.RegisterAuthorRequestDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tools.jackson.databind.ObjectMapper;
-
-import java.util.UUID;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 class LoadAuthorsControllerTest extends BaseIntegrationTest {
     @Autowired

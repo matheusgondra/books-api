@@ -3,10 +3,6 @@ package com.matheusgondra.books.auth.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.matheusgondra.books.auth.dto.request.SignupRequestDTO;
@@ -14,9 +10,11 @@ import com.matheusgondra.books.auth.dto.response.SignupResponseDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
 import com.matheusgondra.books.exception.response.ErrorResponse;
 import com.matheusgondra.books.user.repository.UserRepository;
-
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import tools.jackson.databind.ObjectMapper;
 
 public class SignupControllerTest extends BaseIntegrationTest {
@@ -26,11 +24,7 @@ public class SignupControllerTest extends BaseIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    private final SignupRequestDTO dto = new SignupRequestDTO(
-            "John",
-            "Doe",
-            "john.doe@email.com",
-            "Password@123");
+    private final SignupRequestDTO dto = new SignupRequestDTO("John", "Doe", "john.doe@email.com", "Password@123");
 
     @BeforeEach
     void setup() {
@@ -61,11 +55,7 @@ public class SignupControllerTest extends BaseIntegrationTest {
 
     @Test
     void shouldReturn400OnInvalidRequest() throws JsonProcessingException {
-        SignupRequestDTO invalidDTO = new SignupRequestDTO(
-                "",
-                "Doe",
-                "",
-                "pwd");
+        SignupRequestDTO invalidDTO = new SignupRequestDTO("", "Doe", "", "pwd");
 
         RestAssured.given()
                 .contentType(ContentType.JSON)

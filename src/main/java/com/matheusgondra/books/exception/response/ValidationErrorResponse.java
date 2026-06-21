@@ -1,7 +1,6 @@
 package com.matheusgondra.books.exception.response;
 
 import java.util.List;
-
 import org.springframework.http.HttpStatus;
 
 public record ValidationErrorResponse(int status, String message, List<ValidationFieldErrorResponse> errors) {

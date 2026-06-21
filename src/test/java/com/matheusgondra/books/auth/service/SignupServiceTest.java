@@ -9,10 +9,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.matheusgondra.books.auth.usecase.register.user.RegisterUserData;
+import com.matheusgondra.books.auth.usecase.register.user.RegisterUserResponse;
+import com.matheusgondra.books.cryptography.service.HashService;
+import com.matheusgondra.books.exception.UserAlreadyExistsException;
+import com.matheusgondra.books.user.model.User;
+import com.matheusgondra.books.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,13 +25,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
-
-import com.matheusgondra.books.auth.usecase.register.user.RegisterUserData;
-import com.matheusgondra.books.auth.usecase.register.user.RegisterUserResponse;
-import com.matheusgondra.books.cryptography.service.HashService;
-import com.matheusgondra.books.exception.UserAlreadyExistsException;
-import com.matheusgondra.books.user.model.User;
-import com.matheusgondra.books.user.repository.UserRepository;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -40,11 +38,8 @@ public class SignupServiceTest {
     @Mock
     private HashService hashService;
 
-    private final RegisterUserData registerUserData = new RegisterUserData(
-            "anyFirstName",
-            "anyLastName",
-            "any.email@example.com",
-            "anyPassword@123");
+    private final RegisterUserData registerUserData =
+            new RegisterUserData("anyFirstName", "anyLastName", "any.email@example.com", "anyPassword@123");
     private final UUID userIdMock = UUID.randomUUID();
     private final LocalDateTime fixedNow = LocalDateTime.of(2026, 1, 1, 0, 0);
 
@@ -94,12 +89,7 @@ public class SignupServiceTest {
         var response = sut.execute(registerUserData);
 
         var expected = new RegisterUserResponse(
-                userIdMock,
-                "anyFirstName",
-                "anyLastName",
-                "any.email@example.com",
-                fixedNow,
-                fixedNow);
+                userIdMock, "anyFirstName", "anyLastName", "any.email@example.com", fixedNow, fixedNow);
 
         assertEquals(expected, response);
     }

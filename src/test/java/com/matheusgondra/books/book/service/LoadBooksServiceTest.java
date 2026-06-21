@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.matheusgondra.books.book.dto.BookDetails;
+import com.matheusgondra.books.book.model.Book;
+import com.matheusgondra.books.book.repository.BookRepository;
+import com.matheusgondra.books.factory.BookFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,11 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import com.matheusgondra.books.book.dto.BookDetails;
-import com.matheusgondra.books.book.model.Book;
-import com.matheusgondra.books.book.repository.BookRepository;
-import com.matheusgondra.books.factory.BookFactory;
 
 @ExtendWith(MockitoExtension.class)
 public class LoadBooksServiceTest {

@@ -1,9 +1,8 @@
 package com.matheusgondra.books.factory;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import com.matheusgondra.books.cryptography.service.HashService;
 import com.matheusgondra.books.user.model.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class UserFactory {
     public static User create() {

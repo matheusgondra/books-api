@@ -1,17 +1,15 @@
 package com.matheusgondra.books.auth.service;
 
-import com.matheusgondra.books.cryptography.service.HashService;
-import org.springframework.stereotype.Service;
-
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUser;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserData;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserResponse;
+import com.matheusgondra.books.cryptography.service.HashService;
 import com.matheusgondra.books.exception.UserAlreadyExistsException;
 import com.matheusgondra.books.user.model.User;
 import com.matheusgondra.books.user.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
@@ -29,10 +27,7 @@ public class SignupService implements RegisterUser {
         String hashedPassword = this.hashService.hash(registerUserData.password());
 
         User newUser = new User(
-                registerUserData.firstName(),
-                registerUserData.lastName(),
-                registerUserData.email(),
-                hashedPassword);
+                registerUserData.firstName(), registerUserData.lastName(), registerUserData.email(), hashedPassword);
         User createdUser = this.repository.save(newUser);
 
         return new RegisterUserResponse(

@@ -3,11 +3,6 @@ package com.matheusgondra.books.auth.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.matheusgondra.books.auth.dto.request.LoginRequestDTO;
 import com.matheusgondra.books.auth.dto.response.LoginResponseDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
@@ -15,10 +10,13 @@ import com.matheusgondra.books.exception.response.ErrorResponse;
 import com.matheusgondra.books.factory.UserFactory;
 import com.matheusgondra.books.user.model.User;
 import com.matheusgondra.books.user.repository.UserRepository;
-
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import tools.jackson.databind.ObjectMapper;
 
 public class LoginControllerTest extends BaseIntegrationTest {
@@ -46,12 +44,8 @@ public class LoginControllerTest extends BaseIntegrationTest {
 
     @Test
     void shouldReturn200OnSuccess() {
-        String response = createBaseRequest()
-                .then()
-                .statusCode(200)
-                .extract()
-                .response()
-                .asString();
+        String response =
+                createBaseRequest().then().statusCode(200).extract().response().asString();
 
         LoginResponseDTO loginResponse = objectMapper.readValue(response, LoginResponseDTO.class);
 
@@ -62,10 +56,7 @@ public class LoginControllerTest extends BaseIntegrationTest {
     void shouldReturn400OnInvalidRequest() {
         var invalidDTO = new LoginRequestDTO("", "");
 
-        createBaseRequest(invalidDTO)
-                .then()
-                .statusCode(400);
-
+        createBaseRequest(invalidDTO).then().statusCode(400);
     }
 
     @Test

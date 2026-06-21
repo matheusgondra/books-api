@@ -1,23 +1,21 @@
 package com.matheusgondra.books.auth.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.matheusgondra.books.auth.controller.doc.SignupControllerDoc;
 import com.matheusgondra.books.auth.dto.request.SignupRequestDTO;
 import com.matheusgondra.books.auth.dto.response.SignupResponseDTO;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUser;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserData;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserResponse;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Authentication")
 @Slf4j

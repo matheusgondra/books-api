@@ -1,24 +1,21 @@
 package com.matheusgondra.books.auth.filter;
 
+import com.matheusgondra.books.auth.security.PublicAuthPaths;
+import com.matheusgondra.books.cryptography.service.TokenService;
+import com.matheusgondra.books.exception.response.ErrorResponse;
+import com.matheusgondra.books.user.model.User;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.matheusgondra.books.auth.security.PublicAuthPaths;
-import com.matheusgondra.books.cryptography.service.TokenService;
-import com.matheusgondra.books.exception.response.ErrorResponse;
-import com.matheusgondra.books.user.model.User;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import tools.jackson.databind.ObjectMapper;
 
 @RequiredArgsConstructor
@@ -54,9 +51,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         }
 
         UUID userId = UUID.fromString(subject);
-        UserDetails user = User.builder()
-                .id(userId)
-                .build();
+        UserDetails user = User.builder().id(userId).build();
 
         var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -64,8 +59,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void writeUnauthorizedResponse(HttpServletResponse response)
-            throws IOException {
+    private void writeUnauthorizedResponse(HttpServletResponse response) throws IOException {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Unauthorized");
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

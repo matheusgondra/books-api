@@ -1,30 +1,24 @@
 package com.matheusgondra.books.book.controller;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 
 import com.matheusgondra.books.auth.helper.AuthHelper;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.dto.request.RegisterBookRequestDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
-
 import io.restassured.RestAssured;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
 
 public class RegisterBookControllerTest extends BaseIntegrationTest {
-    private final RegisterBookRequestDTO dto = new RegisterBookRequestDTO(
-            "anyTitle",
-            "anyAuthor",
-            "123456789",
-            120);
+    private final RegisterBookRequestDTO dto = new RegisterBookRequestDTO("anyTitle", "anyAuthor", "123456789", 120);
     private final String path = "/api/book/register";
 
     private String accessToken;
@@ -115,11 +109,7 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
 
     @Test
     void shouldReturn400OnInvalidRequest() {
-        final RegisterBookRequestDTO invalidDto = new RegisterBookRequestDTO(
-                "anyTitle",
-                "anyAuthor",
-                "",
-                1);
+        final RegisterBookRequestDTO invalidDto = new RegisterBookRequestDTO("anyTitle", "anyAuthor", "", 1);
 
         RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

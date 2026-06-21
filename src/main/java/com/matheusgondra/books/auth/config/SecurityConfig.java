@@ -1,5 +1,10 @@
 package com.matheusgondra.books.auth.config;
 
+import com.matheusgondra.books.auth.filter.SecurityFilter;
+import com.matheusgondra.books.auth.security.PublicAuthPaths;
+import com.matheusgondra.books.auth.service.UserDetailsServiceImpl;
+import com.matheusgondra.books.cryptography.service.TokenService;
+import com.matheusgondra.books.user.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,13 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.matheusgondra.books.auth.filter.SecurityFilter;
-import com.matheusgondra.books.auth.security.PublicAuthPaths;
-import com.matheusgondra.books.auth.service.UserDetailsServiceImpl;
-import com.matheusgondra.books.cryptography.service.TokenService;
-import com.matheusgondra.books.user.repository.UserRepository;
-
 import tools.jackson.databind.ObjectMapper;
 
 @Configuration
@@ -26,8 +24,7 @@ import tools.jackson.databind.ObjectMapper;
 public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http, SecurityFilter securityFilter) throws Exception {
-        return http
-                .csrf(csrf -> csrf.disable())
+        return http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(PublicAuthPaths.PUBLIC_ENDPOINTS).permitAll();
@@ -35,7 +32,6 @@ public class SecurityConfig {
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-
     }
 
     @Bean

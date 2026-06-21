@@ -1,21 +1,15 @@
 package com.matheusgondra.books.factory;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.book.dto.BookDetails;
 import com.matheusgondra.books.book.model.Book;
+import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 public class BookFactory {
     public static Book create() {
-        return Book.builder()
-                .title("anyTitle")
-                .isbn("1234567890123")
-                .pages(120)
-                .build();
+        return Book.builder().title("anyTitle").isbn("1234567890123").pages(120).build();
     }
 
     public static Book create(Author author) {

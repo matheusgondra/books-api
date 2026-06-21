@@ -1,9 +1,8 @@
 package com.matheusgondra.books.book.dto.response;
 
+import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
 
 public record RegisterBookResponseDTO(
         UUID id,

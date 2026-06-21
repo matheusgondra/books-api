@@ -1,13 +1,12 @@
 package com.matheusgondra.books.doc.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.tags.Tag;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenAPIConfig {
@@ -30,21 +29,15 @@ public class OpenAPIConfig {
     }
 
     private Tag createAuthTag() {
-        return new Tag()
-                .name("Authentication")
-                .description("Endpoints for user authentication and token management.");
+        return new Tag().name("Authentication").description("Endpoints for user authentication and token management.");
     }
 
     private Tag createAuthorTag() {
-        return new Tag()
-                .name("Author")
-                .description("Endpoints for managing authors.");
+        return new Tag().name("Author").description("Endpoints for managing authors.");
     }
 
     private Tag createBookTag() {
-        return new Tag()
-                .name("Book")
-                .description("Endpoints for managing books.");
+        return new Tag().name("Book").description("Endpoints for managing books.");
     }
 
     private SecurityScheme createSecurityScheme() {
