@@ -65,6 +65,17 @@ class LoadBookByIdControllerTest extends BaseIntegrationTest {
                 .body("message", equalTo("Unauthorized"));
     }
 
+    @Test
+    void shouldReturn404WhenBookNoExists() {
+        RestAssured.given()
+                .header("Authorization", "Bearer " + accessToken)
+                .when()
+                .get(path + UUID.randomUUID())
+                .then()
+                .statusCode(404)
+                .body("message", equalTo("Book not found"));
+    }
+
     private void registerBookTest() {
         Author savedAuthor = authorRepository.save(new Author("authorTest"));
 
