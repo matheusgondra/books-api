@@ -55,6 +55,16 @@ class LoadBookByIdControllerTest extends BaseIntegrationTest {
                 .body("updatedAt", notNullValue());
     }
 
+    @Test
+    void shouldReturn401WhenNoAccessToken() {
+        RestAssured.given()
+                .when()
+                .get(path + id)
+                .then()
+                .statusCode(401)
+                .body("message", equalTo("Unauthorized"));
+    }
+
     private void registerBookTest() {
         Author savedAuthor = authorRepository.save(new Author("authorTest"));
 
