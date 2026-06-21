@@ -41,19 +41,26 @@ for FILE in $STAGED_JAVA_FILES; do
   FILENAME=$(basename -- "$FILE")
   CLASSNAME="${FILENAME%.*}"
 
-  if [ -z "$TEST_CLASSES" ]; then
-    TEST_CLASSES="*$CLASSNAME*"
+  # We look for Test files as well to make sure we run tests when only a test file is modified
+  if [[ "$CLASSNAME" == *"Test" ]]; then
+    TEST_PATTERN="$CLASSNAME"
   else
-    TEST_CLASSES="$TEST_CLASSES,*$CLASSNAME*"
+    TEST_PATTERN="*${CLASSNAME}Test"
+  fi
+
+  if [ -z "$TEST_CLASSES" ]; then
+    TEST_CLASSES="$TEST_PATTERN"
+  else
+    TEST_CLASSES="$TEST_CLASSES,$TEST_PATTERN"
   fi
 done
 
-echo -e "  ${CYAN}Classes identified for testing:${NC} ${TEST_CLASSES}"
+echo -e "  ${CYAN}Test patterns identified:${NC} ${TEST_CLASSES}"
 
 # 3. Run tests only for the affected classes
-# We use failIfNoTests=false in case a domain class doesn't have a test with its name
-if ./mvnw test -Dtest="$TEST_CLASSES" -DfailIfNoTests=false; then
-  echo -e "\n${GREEN}✓ Tests passed successfully!${NC}\n"
+# We use -Dsurefire.failIfNoSpecifiedTests=false to prevent failure when no tests match the pattern.
+if ./mvnw test -Dtest="$TEST_CLASSES" -Dsurefire.failIfNoSpecifiedTests=false; then
+  echo -e "\n${GREEN}✓ Tests passed successfully (or no tests found for modified files).${NC}\n"
 else
   echo -e "\n${RED}✗ Tests failed!${NC}"
   echo -e "${YELLOW}  Check the log above, fix the broken tests for the modified files, and try again.${NC}\n"
