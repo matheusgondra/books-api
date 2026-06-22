@@ -6,8 +6,8 @@ import com.matheusgondra.books.book.dto.response.RegisterBookResponseDTO;
 import com.matheusgondra.books.book.usecase.register.RegisterBook;
 import com.matheusgondra.books.book.usecase.register.RegisterBookData;
 import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
+import com.matheusgondra.books.doc.annotation.BookTag;
 import com.matheusgondra.books.doc.annotation.SecurityJWT;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+@BookTag
 @SecurityJWT
-@Tag(name = "Book")
 @Slf4j
 @RequiredArgsConstructor
 @RestController

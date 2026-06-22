@@ -3,8 +3,8 @@ package com.matheusgondra.books.book.controller;
 import com.matheusgondra.books.book.controller.doc.LoadBookByIdControllerDoc;
 import com.matheusgondra.books.book.dto.BookDetails;
 import com.matheusgondra.books.book.usecase.load.LoadBookById;
+import com.matheusgondra.books.doc.annotation.BookTag;
 import com.matheusgondra.books.doc.annotation.SecurityJWT;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Book")
+@BookTag
 @SecurityJWT
 @Slf4j
 @RequiredArgsConstructor

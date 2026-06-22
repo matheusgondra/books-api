@@ -4,8 +4,8 @@ import com.matheusgondra.books.author.controller.doc.LoadAuthorsControllerDoc;
 import com.matheusgondra.books.author.dto.AuthorDetails;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.usecase.load.author.LoadAuthors;
+import com.matheusgondra.books.doc.annotation.AuthorTag;
 import com.matheusgondra.books.doc.annotation.SecurityJWT;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@AuthorTag
 @SecurityJWT
-@Tag(name = "Author")
 @Slf4j
 @RequiredArgsConstructor
 @RestController

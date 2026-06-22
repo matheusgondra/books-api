@@ -6,7 +6,7 @@ import com.matheusgondra.books.auth.dto.response.SignupResponseDTO;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUser;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserData;
 import com.matheusgondra.books.auth.usecase.register.user.RegisterUserResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.matheusgondra.books.doc.annotation.AuthTag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Authentication")
+@AuthTag
 @Slf4j
 @RequiredArgsConstructor
 @RestController
