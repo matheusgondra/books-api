@@ -1,6 +1,7 @@
 package com.matheusgondra.books.book.service;
 
 import com.matheusgondra.books.author.exception.AuthorNotFoundException;
+import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.dto.BookDetails;
 import com.matheusgondra.books.book.model.Book;
@@ -24,10 +25,32 @@ public class UpdateBookService implements UpdateBook {
     public BookDetails execute(UUID id, UpdateBookData data) {
         Book book = this.bookRepository.findWithAuthorById(id).orElseThrow(BookNotFoundException::new);
 
-        if (data.author() != null && !data.author().equals(book.getAuthor().getName())) {
-            this.authorRepository.findByName(data.author()).orElseThrow(AuthorNotFoundException::new);
+        this.updateBook(book, data);
+
+        return new BookDetails(book);
+    }
+
+    private void updateBook(Book book, UpdateBookData data) {
+        boolean isAuthorChanged =
+                data.author() != null && !data.author().equals(book.getAuthor().getName());
+        if (isAuthorChanged) {
+            Author author = this.authorRepository.findByName(data.author()).orElseThrow(AuthorNotFoundException::new);
+            book.setAuthor(author);
         }
 
-        return null;
+        boolean isTitleChanged = data.title() != null && !data.title().equals(book.getTitle());
+        if (isTitleChanged) {
+            book.setTitle(data.title());
+        }
+
+        boolean isIsbnChanged = data.isbn() != null && !data.isbn().equals(book.getIsbn());
+        if (isIsbnChanged) {
+            book.setIsbn(data.isbn());
+        }
+
+        boolean isPagesChanged = data.pages() != null && !data.pages().equals(book.getPages());
+        if (isPagesChanged) {
+            book.setPages(data.pages());
+        }
     }
 }
