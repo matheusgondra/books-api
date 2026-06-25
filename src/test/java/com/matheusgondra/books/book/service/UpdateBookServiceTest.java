@@ -1,9 +1,13 @@
 package com.matheusgondra.books.book.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.matheusgondra.books.author.exception.AuthorNotFoundException;
+import com.matheusgondra.books.author.model.Author;
+import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.model.Book;
 import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.book.usecase.update.UpdateBookData;
@@ -29,10 +33,16 @@ public class UpdateBookServiceTest {
     @Mock
     private BookRepository bookRepository;
 
+    @Mock
+    private AuthorRepository authorRepository;
+
     @BeforeEach
     void setUp() {
         Book bookMock = BookFactory.createWithAuthor();
+        Author authorMock = bookMock.getAuthor();
+
         when(bookRepository.findWithAuthorById(id)).thenReturn(Optional.of(bookMock));
+        lenient().when(authorRepository.findByName(data.author())).thenReturn(Optional.of(authorMock));
     }
 
     @Test
@@ -47,5 +57,19 @@ public class UpdateBookServiceTest {
         when(bookRepository.findWithAuthorById(id)).thenReturn(Optional.empty());
 
         assertThrows(BookNotFoundException.class, () -> sut.execute(id, data));
+    }
+
+    @Test
+    void shouldCallFindByNameOnAuthorRepositoryWhenAuthorIsDifferent() {
+        sut.execute(id, data);
+
+        verify(authorRepository).findByName(data.author());
+    }
+
+    @Test
+    void shouldThrowAuthorNotFoundExceptionWhenAuthorIsDifferentAndNotFound() {
+        when(authorRepository.findByName(data.author())).thenReturn(Optional.empty());
+
+        assertThrows(AuthorNotFoundException.class, () -> sut.execute(id, data));
     }
 }

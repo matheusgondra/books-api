@@ -12,3 +12,10 @@ spring:
     web:
         error:
             include-stacktrace: never
+    
+springdoc:
+    api-docs:
+        enabled: false
+
+scalar:
+  enabled: false
