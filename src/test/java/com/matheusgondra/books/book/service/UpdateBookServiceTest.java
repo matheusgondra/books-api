@@ -1,5 +1,6 @@
 package com.matheusgondra.books.book.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
@@ -8,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.matheusgondra.books.author.exception.AuthorNotFoundException;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
+import com.matheusgondra.books.book.dto.BookDetails;
 import com.matheusgondra.books.book.model.Book;
 import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.book.usecase.update.UpdateBookData;
@@ -26,6 +28,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class UpdateBookServiceTest {
     private final UUID id = UUID.randomUUID();
     private final UpdateBookData data = new UpdateBookData("anyTitle", "anyAuthor", "anyIsbn", 120);
+    private final Book bookMock = BookFactory.createWithAuthor();
+    private final Author authorMock = bookMock.getAuthor();
 
     @InjectMocks
     private UpdateBookService sut;
@@ -38,8 +42,6 @@ public class UpdateBookServiceTest {
 
     @BeforeEach
     void setUp() {
-        Book bookMock = BookFactory.createWithAuthor();
-        Author authorMock = bookMock.getAuthor();
 
         when(bookRepository.findWithAuthorById(id)).thenReturn(Optional.of(bookMock));
         lenient().when(authorRepository.findByName(data.author())).thenReturn(Optional.of(authorMock));
@@ -71,5 +73,16 @@ public class UpdateBookServiceTest {
         when(authorRepository.findByName(data.author())).thenReturn(Optional.empty());
 
         assertThrows(AuthorNotFoundException.class, () -> sut.execute(id, data));
+    }
+
+    @Test
+    void shouldReturnUpdatedBook() {
+        BookDetails result = sut.execute(id, data);
+
+        assertEquals(bookMock.getId(), result.id());
+        assertEquals(bookMock.getTitle(), result.title());
+        assertEquals(bookMock.getAuthor().getName(), result.author());
+        assertEquals(bookMock.getIsbn(), result.isbn());
+        assertEquals(bookMock.getPages(), result.pages());
     }
 }
