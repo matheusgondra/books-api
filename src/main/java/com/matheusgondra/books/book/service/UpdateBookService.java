@@ -27,6 +27,8 @@ public class UpdateBookService implements UpdateBook {
 
         this.updateBook(book, data);
 
+        this.bookRepository.save(book);
+
         return new BookDetails(book);
     }
 
