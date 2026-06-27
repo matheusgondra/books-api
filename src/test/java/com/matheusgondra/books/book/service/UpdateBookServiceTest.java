@@ -76,6 +76,13 @@ public class UpdateBookServiceTest {
     }
 
     @Test
+    void shouldSaveUpdatedBook() {
+        sut.execute(id, data);
+
+        verify(bookRepository).save(bookMock);
+    }
+
+    @Test
     void shouldReturnUpdatedBook() {
         BookDetails result = sut.execute(id, data);
 
