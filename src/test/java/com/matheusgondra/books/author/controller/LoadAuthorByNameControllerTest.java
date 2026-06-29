@@ -2,7 +2,6 @@ package com.matheusgondra.books.author.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.matheusgondra.books.auth.helper.AuthHelper;
 import com.matheusgondra.books.author.dto.request.RegisterAuthorRequestDTO;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.config.BaseIntegrationTest;
@@ -20,15 +19,8 @@ class LoadAuthorByNameControllerTest extends BaseIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private AuthHelper authHelper;
-
-    private String accessToken;
-
     @Test
     void shouldReturn200OnSuccess() {
-        accessToken = authHelper.getAccessToken();
-
         registerAuthorTest();
 
         String response = RestAssured.given()

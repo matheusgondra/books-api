@@ -3,7 +3,6 @@ package com.matheusgondra.books.author.controller;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import com.matheusgondra.books.auth.helper.AuthHelper;
 import com.matheusgondra.books.author.dto.request.RegisterAuthorRequestDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
 import io.restassured.RestAssured;
@@ -15,17 +14,10 @@ import tools.jackson.databind.ObjectMapper;
 
 class LoadAuthorsControllerTest extends BaseIntegrationTest {
     @Autowired
-    private AuthHelper authHelper;
-
-    @Autowired
     private ObjectMapper objectMapper;
-
-    private String accessToken;
 
     @Test
     void shouldReturn200OnSuccess() {
-        accessToken = authHelper.getAccessToken();
-
         registerAuthorsTest();
 
         RestAssured.given()

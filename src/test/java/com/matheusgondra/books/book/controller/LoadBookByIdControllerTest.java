@@ -3,7 +3,6 @@ package com.matheusgondra.books.book.controller;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import com.matheusgondra.books.auth.helper.AuthHelper;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.model.Book;
@@ -19,11 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class LoadBookByIdControllerTest extends BaseIntegrationTest {
     private final String path = "/api/book/";
 
-    private String accessToken;
     private UUID id;
-
-    @Autowired
-    private AuthHelper authHelper;
 
     @Autowired
     private BookRepository bookRepository;
@@ -33,7 +28,6 @@ class LoadBookByIdControllerTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        accessToken = authHelper.getAccessToken();
         registerBookTest();
     }
 

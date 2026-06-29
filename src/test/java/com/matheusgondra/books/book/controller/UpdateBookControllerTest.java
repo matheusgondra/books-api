@@ -2,7 +2,6 @@ package com.matheusgondra.books.book.controller;
 
 import static org.hamcrest.Matchers.equalTo;
 
-import com.matheusgondra.books.auth.helper.AuthHelper;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.dto.request.UpdateBookRequestDTO;
@@ -22,14 +21,10 @@ class UpdateBookControllerTest extends BaseIntegrationTest {
     private final String path = "/api/book/";
     private final UpdateBookRequestDTO dto = new UpdateBookRequestDTO("anyTitleUpdated", null, null, null);
 
-    private String accessToken;
     private UUID id;
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private AuthHelper authHelper;
 
     @Autowired
     private BookRepository bookRepository;
@@ -39,8 +34,6 @@ class UpdateBookControllerTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        accessToken = authHelper.getAccessToken();
-
         Author author = authorRepository.save(new Author("anyName"));
         Book book = Book.builder()
                 .title("anyTitle")

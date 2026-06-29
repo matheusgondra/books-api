@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 
-import com.matheusgondra.books.auth.helper.AuthHelper;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.dto.request.RegisterBookRequestDTO;
@@ -21,20 +20,14 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
     private final RegisterBookRequestDTO dto = new RegisterBookRequestDTO("anyTitle", "anyAuthor", "123456789", 120);
     private final String path = "/api/book/register";
 
-    private String accessToken;
-
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private AuthHelper authHelper;
 
     @Autowired
     private AuthorRepository authorRepository;
 
     @BeforeEach
     void setUp() {
-        accessToken = authHelper.getAccessToken();
         authorRepository.save(new Author("anyAuthor"));
     }
 

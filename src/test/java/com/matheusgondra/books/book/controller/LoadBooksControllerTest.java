@@ -3,7 +3,6 @@ package com.matheusgondra.books.book.controller;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import com.matheusgondra.books.auth.helper.AuthHelper;
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.model.Book;
@@ -25,21 +24,14 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
             BookFactory.create(author, "0987654321098"),
             BookFactory.create(author, "1122334455667"));
 
-    private String accessToken;
-
     @Autowired
     private AuthorRepository authorRepository;
 
     @Autowired
     private BookRepository bookRepository;
 
-    @Autowired
-    private AuthHelper authHelper;
-
     @BeforeEach
     void setUp() {
-        accessToken = authHelper.getAccessToken();
-
         registerBooks();
     }
 
