@@ -14,6 +14,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
 
@@ -110,5 +111,25 @@ class UpdateBookControllerTest extends BaseIntegrationTest {
                 .statusCode(401)
                 .body("message", equalTo("Unauthorized"))
                 .body("status", equalTo(401));
+    }
+
+    @Test
+    void shouldReturn400WhenInvalidRequest() {
+        UpdateBookRequestDTO invalidDto = new UpdateBookRequestDTO(null, null, null, -1);
+
+        RestAssured.given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .header(HttpHeaders.ACCEPT_LANGUAGE, "en-US")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(invalidDto))
+                .when()
+                .put(path + id)
+                .then()
+                .statusCode(400)
+                .body("message", equalTo("Validation failed"))
+                .body("errors.size()", equalTo(1))
+                .body("errors[0].field", equalTo("pages"))
+                .body("errors[0].message", equalTo("must be greater than or equal to 20"))
+                .body("status", equalTo(400));
     }
 }
