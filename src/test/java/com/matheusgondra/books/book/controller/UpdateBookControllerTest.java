@@ -98,4 +98,17 @@ class UpdateBookControllerTest extends BaseIntegrationTest {
                 .body("message", equalTo("Author not found"))
                 .body("status", equalTo(404));
     }
+
+    @Test
+    void shouldReturn401WhenNotAuthorized() {
+        RestAssured.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(dto))
+                .when()
+                .put(path + id)
+                .then()
+                .statusCode(401)
+                .body("message", equalTo("Unauthorized"))
+                .body("status", equalTo(401));
+    }
 }
