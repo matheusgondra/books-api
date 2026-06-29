@@ -1,5 +1,7 @@
 package com.matheusgondra.books.book.controller;
 
+import static org.hamcrest.Matchers.equalTo;
+
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.model.Book;
@@ -45,5 +47,16 @@ public class DeleteBookControllerTest extends BaseIntegrationTest {
                 .delete(path + id)
                 .then()
                 .statusCode(204);
+    }
+
+    @Test
+    void shouldReturn404WhenBookNotFound() {
+        RestAssured.given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .delete(path + UUID.randomUUID())
+                .then()
+                .statusCode(404)
+                .body("message", equalTo("Book not found"))
+                .body("status", equalTo(404));
     }
 }
