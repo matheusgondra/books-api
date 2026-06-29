@@ -59,4 +59,14 @@ public class DeleteBookControllerTest extends BaseIntegrationTest {
                 .body("message", equalTo("Book not found"))
                 .body("status", equalTo(404));
     }
+
+    @Test
+    void shouldReturn401WhenNotAuthorized() {
+        RestAssured.given()
+                .delete(path + UUID.randomUUID())
+                .then()
+                .statusCode(401)
+                .body("message", equalTo("Unauthorized"))
+                .body("status", equalTo(401));
+    }
 }
