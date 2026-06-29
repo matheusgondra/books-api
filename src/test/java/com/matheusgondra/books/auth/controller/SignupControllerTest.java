@@ -1,25 +1,25 @@
 package com.matheusgondra.books.auth.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.matheusgondra.books.auth.dto.request.SignupRequestDTO;
-import com.matheusgondra.books.auth.dto.response.SignupResponseDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
-import com.matheusgondra.books.exception.response.ErrorResponse;
 import com.matheusgondra.books.user.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import tools.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpHeaders;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 public class SignupControllerTest extends BaseIntegrationTest {
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final String path = "/api/signup";
 
     @Autowired
     private UserRepository userRepository;
@@ -32,64 +32,88 @@ public class SignupControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    void shouldReturn201OnSuccess() throws JsonMappingException, JsonProcessingException {
-        String response = RestAssured.given()
+    void shouldReturn201OnSuccess() {
+        RestAssured.given()
                 .contentType(ContentType.JSON)
-                .body(this.objectMapper.writeValueAsString(dto))
+                .body(dto)
                 .when()
-                .post("/api/signup")
+                .post(path)
                 .then()
                 .statusCode(201)
-                .extract()
-                .response()
-                .asString();
-        SignupResponseDTO signupResponse = this.objectMapper.readValue(response, SignupResponseDTO.class);
-
-        assertNotNull(signupResponse.id());
-        assertEquals(signupResponse.firstName(), "John");
-        assertEquals(signupResponse.lastName(), "Doe");
-        assertEquals(signupResponse.email(), "john.doe@email.com");
-        assertNotNull(signupResponse.createdAt());
-        assertNotNull(signupResponse.updatedAt());
+                .body("id", notNullValue())
+                .body("firstName", equalTo("John"))
+                .body("lastName", equalTo("Doe"))
+                .body("email", equalTo("john.doe@email.com"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue());
     }
 
     @Test
-    void shouldReturn400OnInvalidRequest() throws JsonProcessingException {
+    void shouldReturn200WithXml() {
+        XmlMapper xmlMapper = new XmlMapper();
+
+        RestAssured.given()
+                .contentType(ContentType.XML)
+                .accept(ContentType.XML)
+                .body(xmlMapper.writeValueAsString(dto))
+                .when()
+                .post(path)
+                .then()
+                .statusCode(201)
+                .contentType(ContentType.XML)
+                .body("SignupResponseDTO.id", notNullValue())
+                .body("SignupResponseDTO.firstName", equalTo("John"))
+                .body("SignupResponseDTO.lastName", equalTo("Doe"))
+                .body("SignupResponseDTO.email", equalTo("john.doe@email.com"))
+                .body("SignupResponseDTO.createdAt", notNullValue())
+                .body("SignupResponseDTO.updatedAt", notNullValue());
+    }
+
+    @Test
+    void shouldReturn400OnInvalidRequest() {
         SignupRequestDTO invalidDTO = new SignupRequestDTO("", "Doe", "", "pwd");
 
-        RestAssured.given()
+        List<Map<String, String>> errors = RestAssured.given()
+                .header(HttpHeaders.ACCEPT_LANGUAGE, "en-US")
                 .contentType(ContentType.JSON)
-                .body(this.objectMapper.writeValueAsString(invalidDTO))
+                .body(invalidDTO)
                 .when()
-                .post("/api/signup")
+                .post(path)
                 .then()
-                .statusCode(400);
+                .statusCode(400)
+                .body("status", equalTo(400))
+                .body("message", equalTo("Validation failed"))
+                .extract()
+                .jsonPath()
+                .getList("errors");
+
+        assertThat(errors)
+                .hasSize(3)
+                .extracting("field", "message")
+                .containsExactlyInAnyOrder(
+                        tuple("firstName", "must not be blank"),
+                        tuple("email", "must not be blank"),
+                        tuple("password", "size must be between 6 and 2147483647"));
     }
 
     @Test
-    void shouldReturn409WhenUserAlreadyExists() throws JsonMappingException, JsonProcessingException {
+    void shouldReturn409WhenUserAlreadyExists() {
         RestAssured.given()
                 .contentType(ContentType.JSON)
-                .body(this.objectMapper.writeValueAsString(dto))
+                .body(dto)
                 .when()
-                .post("/api/signup")
+                .post(path)
                 .then()
                 .statusCode(201);
 
-        String response = RestAssured.given()
+        RestAssured.given()
                 .contentType(ContentType.JSON)
-                .body(this.objectMapper.writeValueAsString(dto))
+                .body(dto)
                 .when()
-                .post("/api/signup")
+                .post(path)
                 .then()
                 .statusCode(409)
-                .extract()
-                .response()
-                .asString();
-
-        ErrorResponse errorResponse = this.objectMapper.readValue(response, ErrorResponse.class);
-
-        assertEquals(409, errorResponse.status());
-        assertEquals("User already exists", errorResponse.message());
+                .body("status", equalTo(409))
+                .body("message", equalTo("User already exists"));
     }
 }
