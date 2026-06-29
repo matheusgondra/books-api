@@ -1,31 +1,31 @@
 package com.matheusgondra.books.auth.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 import com.matheusgondra.books.auth.dto.request.LoginRequestDTO;
-import com.matheusgondra.books.auth.dto.response.LoginResponseDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
-import com.matheusgondra.books.exception.response.ErrorResponse;
 import com.matheusgondra.books.factory.UserFactory;
 import com.matheusgondra.books.user.model.User;
 import com.matheusgondra.books.user.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import tools.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpHeaders;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 public class LoginControllerTest extends BaseIntegrationTest {
     private final String emailMock = "john.doe@gmail.com";
     private final String passwordMock = "Password@123";
     private final LoginRequestDTO dto = new LoginRequestDTO(emailMock, passwordMock);
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final String path = "/api/login";
 
     @Autowired
     private UserRepository userRepository;
@@ -44,51 +44,71 @@ public class LoginControllerTest extends BaseIntegrationTest {
 
     @Test
     void shouldReturn200OnSuccess() {
-        String response =
-                createBaseRequest().then().statusCode(200).extract().response().asString();
+        RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(dto)
+                .when()
+                .post(path)
+                .then()
+                .statusCode(200)
+                .body("accessToken", notNullValue());
+    }
 
-        LoginResponseDTO loginResponse = objectMapper.readValue(response, LoginResponseDTO.class);
+    @Test
+    void shouldReturn200WithXML() {
+        XmlMapper xmlMapper = new XmlMapper();
 
-        assertNotNull(loginResponse.accessToken());
+        RestAssured.given()
+                .contentType(ContentType.XML)
+                .accept(ContentType.XML)
+                .body(xmlMapper.writeValueAsString(dto))
+                .when()
+                .post(path)
+                .then()
+                .statusCode(200)
+                .contentType(ContentType.XML)
+                .body("LoginResponseDTO.accessToken", notNullValue());
     }
 
     @Test
     void shouldReturn400OnInvalidRequest() {
         var invalidDTO = new LoginRequestDTO("", "");
 
-        createBaseRequest(invalidDTO).then().statusCode(400);
+        List<Map<String, String>> errors = RestAssured.given()
+                .header(HttpHeaders.ACCEPT_LANGUAGE, "en-US")
+                .contentType(ContentType.JSON)
+                .body(invalidDTO)
+                .when()
+                .post(path)
+                .then()
+                .statusCode(400)
+                .body("status", equalTo(400))
+                .body("message", equalTo("Validation failed"))
+                .extract()
+                .jsonPath()
+                .getList("errors");
+
+        assertThat(errors)
+                .hasSize(3)
+                .extracting("field", "message")
+                .containsExactlyInAnyOrder(
+                        tuple("email", "must not be blank"),
+                        tuple("password", "must not be blank"),
+                        tuple("password", "size must be between 6 and 2147483647"));
     }
 
     @Test
     void shouldReturn401OnInvalidCredentials() {
         var invalidDTO = new LoginRequestDTO("nonexistent@gmail.com", "WrongPassword@123");
 
-        String response = createBaseRequest(invalidDTO)
+        RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(invalidDTO)
+                .when()
+                .post(path)
                 .then()
                 .statusCode(401)
-                .extract()
-                .response()
-                .asString();
-
-        ErrorResponse loginResponse = objectMapper.readValue(response, ErrorResponse.class);
-
-        assertEquals(401, loginResponse.status());
-        assertEquals("Invalid credentials", loginResponse.message());
-    }
-
-    private Response createBaseRequest() {
-        return RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(dto))
-                .when()
-                .post("/api/login");
-    }
-
-    private Response createBaseRequest(LoginRequestDTO dto) {
-        return RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(dto))
-                .when()
-                .post("/api/login");
+                .body("status", equalTo(401))
+                .body("message", equalTo("Invalid credentials"));
     }
 }
