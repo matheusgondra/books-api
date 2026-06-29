@@ -10,6 +10,7 @@ import com.matheusgondra.books.doc.annotation.AuthTag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,9 @@ public class LoginController {
     private final Login useCase;
 
     @LoginControllerDoc
-    @PostMapping
+    @PostMapping(
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<LoginResponseDTO> handle(@RequestBody @Valid LoginRequestDTO dto) {
         log.debug("DTO: {}", dto);
         LoginData loginData = new LoginData(dto.email(), dto.password());
