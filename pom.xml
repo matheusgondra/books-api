@@ -23,6 +23,7 @@
 		<jwt.version>4.5.0</jwt.version>
 		<testcontainer.version>1.19.8</testcontainer.version>
 		<restassured.version>6.0.0</restassured.version>
+		<jackson-xml.version>3.1.1</jackson-xml.version>
 	</properties>
 	
 	<dependencies>
@@ -85,6 +86,12 @@
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
 			<version>${jwt.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>tools.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>${jackson-xml.version}</version>
 		</dependency>
 
 		<!-- Test Dependencies -->
