@@ -68,4 +68,18 @@ class UpdateBookControllerTest extends BaseIntegrationTest {
                 .body("pages", equalTo(120))
                 .body("author", equalTo("anyName"));
     }
+
+    @Test
+    void shouldReturn404WhenBookNotFound() {
+        RestAssured.given()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(dto))
+                .when()
+                .put(path + UUID.randomUUID())
+                .then()
+                .statusCode(404)
+                .body("message", equalTo("Book not found"))
+                .body("status", equalTo(404));
+    }
 }
