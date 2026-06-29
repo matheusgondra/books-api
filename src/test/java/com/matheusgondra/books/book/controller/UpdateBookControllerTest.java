@@ -82,4 +82,20 @@ class UpdateBookControllerTest extends BaseIntegrationTest {
                 .body("message", equalTo("Book not found"))
                 .body("status", equalTo(404));
     }
+
+    @Test
+    void shouldReturn404WhenAuthorNotFound() {
+        UpdateBookRequestDTO invalidDto = new UpdateBookRequestDTO(null, null, "invalidAuthor", null);
+
+        RestAssured.given()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(invalidDto))
+                .when()
+                .put(path + id)
+                .then()
+                .statusCode(404)
+                .body("message", equalTo("Author not found"))
+                .body("status", equalTo(404));
+    }
 }
