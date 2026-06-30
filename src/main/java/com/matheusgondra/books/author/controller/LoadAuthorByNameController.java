@@ -27,7 +27,6 @@ public class LoadAuthorByNameController {
     @LoadAuthorByNameControllerDoc
     @GetMapping(
             value = "{name}",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AuthorDetails> handle(@PathVariable String name) {
         log.debug("Receive name: {}", name);
