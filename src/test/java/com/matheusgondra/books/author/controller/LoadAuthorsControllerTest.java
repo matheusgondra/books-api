@@ -63,6 +63,16 @@ class LoadAuthorsControllerTest extends BaseIntegrationTest {
                 .body("size", equalTo(2));
     }
 
+    @Test
+    void shouldReturn401WhenNotAuthenticated() {
+        RestAssured.given()
+                .get(path)
+                .then()
+                .statusCode(401)
+                .body("message", equalTo("Unauthorized"))
+                .body("status", equalTo(401));
+    }
+
     private void registerAuthorsTest() {
         for (int i = 0; i < 3; i++) {
             registerAuthorTest();
