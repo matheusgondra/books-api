@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,7 @@ public class LoadBooksController {
 
     @LoadBooksControllerDoc
     @GetMapping
-    public ResponseEntity<Page<BookDetails>> handle(
+    public ResponseEntity<PagedModel<BookDetails>> handle(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         log.debug("Page {}, Page size {}", page, size);
 
@@ -37,6 +38,8 @@ public class LoadBooksController {
 
         log.debug("Use case result: {}", result);
 
-        return ResponseEntity.ok(result);
+        PagedModel<BookDetails> pagedResponse = new PagedModel<>(result);
+
+        return ResponseEntity.ok(pagedResponse);
     }
 }

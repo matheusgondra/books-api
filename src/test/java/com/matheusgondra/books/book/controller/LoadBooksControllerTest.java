@@ -45,9 +45,10 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
                 .get(path)
                 .then()
                 .statusCode(200)
-                .body("totalElements", equalTo(3))
-                .body("totalPages", equalTo(2))
-                .body("size", equalTo(2))
+                .body("page.totalElements", equalTo(3))
+                .body("page.totalPages", equalTo(2))
+                .body("page.size", equalTo(2))
+                .body("page.number", equalTo(0))
                 .body("content.size()", equalTo(2))
                 .body("content[0].id", notNullValue())
                 .body("content[0].title", equalTo("anyTitle"))
@@ -70,9 +71,10 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
                 .get(path)
                 .then()
                 .statusCode(200)
-                .body("totalElements", equalTo(0))
-                .body("totalPages", equalTo(0))
-                .body("size", equalTo(2))
+                .body("page.totalElements", equalTo(0))
+                .body("page.totalPages", equalTo(0))
+                .body("page.size", equalTo(2))
+                .body("page.number", equalTo(0))
                 .body("content", equalTo(List.of()));
     }
 
