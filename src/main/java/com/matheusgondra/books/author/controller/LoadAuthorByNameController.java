@@ -8,6 +8,7 @@ import com.matheusgondra.books.doc.annotation.AuthorTag;
 import com.matheusgondra.books.doc.annotation.SecurityJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,10 @@ public class LoadAuthorByNameController {
     private final LoadAuthorByName useCase;
 
     @LoadAuthorByNameControllerDoc
-    @GetMapping("{name}")
+    @GetMapping(
+            value = "{name}",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AuthorDetails> handle(@PathVariable String name) {
         log.debug("Receive name: {}", name);
 
