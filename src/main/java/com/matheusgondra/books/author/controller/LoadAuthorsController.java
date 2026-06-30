@@ -9,12 +9,12 @@ import com.matheusgondra.books.doc.annotation.SecurityJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @AuthorTag
@@ -27,16 +27,14 @@ public class LoadAuthorsController {
     private final LoadAuthors useCase;
 
     @LoadAuthorsControllerDoc
-    @GetMapping
-    public ResponseEntity<Page<AuthorDetails>> handle(
-            @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "10") Integer size) {
-        log.debug("Receive page {} and size {}", page, size);
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<PagedModel<AuthorDetails>> handle(Pageable pageable) {
+        log.debug("Receive page {} and size {}", pageable.getPageNumber(), pageable.getPageSize());
 
-        Pageable pageable = PageRequest.of(page, size);
         Page<Author> result = this.useCase.execute(pageable);
         Page<AuthorDetails> response = result.map(AuthorDetails::new);
+        PagedModel<AuthorDetails> pagedResponse = new PagedModel<>(response);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(pagedResponse);
     }
 }
