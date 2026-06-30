@@ -9,6 +9,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 
 class LoadAuthorByNameControllerTest extends BaseIntegrationTest {
     private final String authorName = "anyAuthor-" + UUID.randomUUID().toString();
@@ -20,7 +21,7 @@ class LoadAuthorByNameControllerTest extends BaseIntegrationTest {
         registerAuthorTest();
 
         RestAssured.given()
-                .header("Authorization", "Bearer " + accessToken)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(ContentType.JSON)
                 .when()
                 .get(path, authorName)
@@ -36,7 +37,7 @@ class LoadAuthorByNameControllerTest extends BaseIntegrationTest {
     @Test
     void shouldReturn404WhenAuthorNotFound() {
         RestAssured.given()
-                .header("Authorization", "Bearer " + accessToken)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(ContentType.JSON)
                 .when()
                 .get(path, "nonExistentAuthor")
@@ -47,11 +48,24 @@ class LoadAuthorByNameControllerTest extends BaseIntegrationTest {
                 .body("status", equalTo(404));
     }
 
+    @Test
+    void shouldReturn401WhenNotAuthorized() {
+        RestAssured.given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(path, authorName)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(401)
+                .body("message", equalTo("Unauthorized"))
+                .body("status", equalTo(401));
+    }
+
     private void registerAuthorTest() {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(dto)
-                .header("Authorization", "Bearer " + accessToken)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .when()
                 .post("/api/author/register")
                 .then()
