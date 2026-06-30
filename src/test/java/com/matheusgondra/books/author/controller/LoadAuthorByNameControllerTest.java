@@ -3,26 +3,33 @@ package com.matheusgondra.books.author.controller;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import com.matheusgondra.books.author.dto.request.RegisterAuthorRequestDTO;
+import com.matheusgondra.books.author.model.Author;
+import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.config.BaseIntegrationTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
 class LoadAuthorByNameControllerTest extends BaseIntegrationTest {
-    private final String authorName = "anyAuthor-" + UUID.randomUUID().toString();
+    private final String authorName = "anyAuthor";
+    private final Author author = new Author(authorName);
     private final String path = "/api/author/loadByName/{name}";
-    private final RegisterAuthorRequestDTO dto = new RegisterAuthorRequestDTO(authorName);
+
+    @Autowired
+    private AuthorRepository authorRepository;
+
+    @BeforeEach
+    void setUp() {
+        registerAuthorTest();
+    }
 
     @Test
     void shouldReturn200OnSuccess() {
-        registerAuthorTest();
-
         RestAssured.given()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .contentType(ContentType.JSON)
                 .when()
                 .get(path, authorName)
                 .then()
@@ -35,10 +42,25 @@ class LoadAuthorByNameControllerTest extends BaseIntegrationTest {
     }
 
     @Test
+    void shouldReturn200WithXml() {
+        RestAssured.given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .header(HttpHeaders.ACCEPT, ContentType.XML)
+                .when()
+                .get(path, authorName)
+                .then()
+                .contentType(ContentType.XML)
+                .statusCode(200)
+                .body("AuthorDetails.id", notNullValue())
+                .body("AuthorDetails.name", equalTo(authorName))
+                .body("AuthorDetails.createdAt", notNullValue())
+                .body("AuthorDetails.updatedAt", notNullValue());
+    }
+
+    @Test
     void shouldReturn404WhenAuthorNotFound() {
         RestAssured.given()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .contentType(ContentType.JSON)
                 .when()
                 .get(path, "nonExistentAuthor")
                 .then()
@@ -51,7 +73,6 @@ class LoadAuthorByNameControllerTest extends BaseIntegrationTest {
     @Test
     void shouldReturn401WhenNotAuthorized() {
         RestAssured.given()
-                .contentType(ContentType.JSON)
                 .when()
                 .get(path, authorName)
                 .then()
@@ -62,13 +83,6 @@ class LoadAuthorByNameControllerTest extends BaseIntegrationTest {
     }
 
     private void registerAuthorTest() {
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(dto)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .when()
-                .post("/api/author/register")
-                .then()
-                .statusCode(201);
+        authorRepository.save(author);
     }
 }
