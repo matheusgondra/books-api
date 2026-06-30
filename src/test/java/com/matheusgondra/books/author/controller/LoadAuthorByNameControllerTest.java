@@ -1,48 +1,56 @@
 package com.matheusgondra.books.author.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 import com.matheusgondra.books.author.dto.request.RegisterAuthorRequestDTO;
-import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.config.BaseIntegrationTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import tools.jackson.databind.ObjectMapper;
 
 class LoadAuthorByNameControllerTest extends BaseIntegrationTest {
     private final String authorName = "anyAuthor-" + UUID.randomUUID().toString();
+    private final String path = "/api/author/loadByName/{name}";
     private final RegisterAuthorRequestDTO dto = new RegisterAuthorRequestDTO(authorName);
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     void shouldReturn200OnSuccess() {
         registerAuthorTest();
 
-        String response = RestAssured.given()
+        RestAssured.given()
                 .header("Authorization", "Bearer " + accessToken)
+                .contentType(ContentType.JSON)
                 .when()
-                .get("/api/author/loadByName/" + authorName)
+                .get(path, authorName)
                 .then()
+                .contentType(ContentType.JSON)
                 .statusCode(200)
-                .extract()
-                .response()
-                .asString();
+                .body("id", notNullValue())
+                .body("name", equalTo(authorName))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue());
+    }
 
-        Author authorResponse = objectMapper.readValue(response, Author.class);
-
-        assertEquals(authorName, authorResponse.getName());
+    @Test
+    void shouldReturn404WhenAuthorNotFound() {
+        RestAssured.given()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(ContentType.JSON)
+                .when()
+                .get(path, "nonExistentAuthor")
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(404)
+                .body("message", equalTo("Author not found"))
+                .body("status", equalTo(404));
     }
 
     private void registerAuthorTest() {
-
         RestAssured.given()
                 .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(dto))
+                .body(dto)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
                 .post("/api/author/register")
