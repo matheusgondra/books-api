@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 public class RegisterAuthorControllerTest extends BaseIntegrationTest {
     private final RegisterAuthorRequestDTO dto = new RegisterAuthorRequestDTO("anyAuthor");
@@ -33,6 +34,26 @@ public class RegisterAuthorControllerTest extends BaseIntegrationTest {
                 .body("name", equalTo(dto.name()))
                 .body("createdAt", notNullValue())
                 .body("updatedAt", notNullValue());
+    }
+
+    @Test
+    void shouldReturn201WithXml() {
+        XmlMapper mapper = new XmlMapper();
+
+        RestAssured.given()
+                .contentType(ContentType.XML)
+                .accept(ContentType.XML)
+                .body(mapper.writeValueAsString(dto))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .when()
+                .post(path)
+                .then()
+                .contentType(ContentType.XML)
+                .statusCode(201)
+                .body("RegisterAuthorResponseDTO.id", notNullValue())
+                .body("RegisterAuthorResponseDTO.name", equalTo(dto.name()))
+                .body("RegisterAuthorResponseDTO.createdAt", notNullValue())
+                .body("RegisterAuthorResponseDTO.updatedAt", notNullValue());
     }
 
     @Test
