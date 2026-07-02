@@ -1,8 +1,8 @@
 package com.matheusgondra.books.book.controller;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 
 import com.matheusgondra.books.author.model.Author;
@@ -10,18 +10,17 @@ import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.dto.request.RegisterBookRequestDTO;
 import com.matheusgondra.books.config.BaseIntegrationTest;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import tools.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpHeaders;
 
 public class RegisterBookControllerTest extends BaseIntegrationTest {
     private final RegisterBookRequestDTO dto = new RegisterBookRequestDTO("anyTitle", "anyAuthor", "123456789", 120);
     private final String path = "/api/book/register";
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private AuthorRepository authorRepository;
@@ -33,14 +32,14 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
 
     @Test
     void shouldReturn201OnSuccess() {
-
         RestAssured.given()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken)
-                .body(objectMapper.writeValueAsString(dto))
+                .contentType(ContentType.JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .body(dto)
                 .when()
                 .post(path)
                 .then()
+                .contentType(ContentType.JSON)
                 .statusCode(201)
                 .body("id", notNullValue())
                 .body("title", equalTo(dto.title()))
@@ -56,34 +55,38 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
         authorRepository.deleteAll();
 
         RestAssured.given()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken)
-                .body(objectMapper.writeValueAsString(dto))
+                .contentType(ContentType.JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .body(dto)
                 .when()
                 .post(path)
                 .then()
+                .contentType(ContentType.JSON)
                 .statusCode(404)
-                .body("message", equalTo("Author not found"));
+                .body("message", equalTo("Author not found"))
+                .body("status", equalTo(404));
     }
 
     @Test
     void shouldReturn409OnDuplicateISBN() {
         RestAssured.given()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken)
-                .body(objectMapper.writeValueAsString(dto))
+                .contentType(ContentType.JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .body(dto)
                 .when()
                 .post(path)
                 .then()
+                .contentType(ContentType.JSON)
                 .statusCode(201);
 
         RestAssured.given()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken)
-                .body(objectMapper.writeValueAsString(dto))
+                .contentType(ContentType.JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .body(dto)
                 .when()
                 .post(path)
                 .then()
+                .contentType(ContentType.JSON)
                 .statusCode(409)
                 .body("status", equalTo(409))
                 .body("message", equalTo("A book with the same ISBN already exists."));
@@ -92,30 +95,41 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
     @Test
     void shouldReturn401OnUnauthorized() {
         RestAssured.given()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(objectMapper.writeValueAsString(dto))
+                .contentType(ContentType.JSON)
+                .body(dto)
                 .when()
                 .post(path)
                 .then()
-                .statusCode(401);
+                .contentType(ContentType.JSON)
+                .statusCode(401)
+                .body("status", equalTo(401))
+                .body("message", equalTo("Unauthorized"));
     }
 
     @Test
     void shouldReturn400OnInvalidRequest() {
         final RegisterBookRequestDTO invalidDto = new RegisterBookRequestDTO("anyTitle", "anyAuthor", "", 1);
 
-        RestAssured.given()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken)
-                .body(objectMapper.writeValueAsString(invalidDto))
+        List<Map<String, String>> errors = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .header(HttpHeaders.ACCEPT_LANGUAGE, "en-US")
+                .body(invalidDto)
                 .when()
                 .post(path)
                 .then()
+                .contentType(ContentType.JSON)
                 .statusCode(400)
                 .body("status", equalTo(400))
                 .body("message", equalTo("Validation failed"))
-                .body("errors", hasSize(2))
-                .body("errors.field", containsInAnyOrder("isbn", "pages"))
-                .body("errors.message", hasSize(2));
+                .extract()
+                .jsonPath()
+                .getList("errors");
+
+        assertThat(errors)
+                .hasSize(2)
+                .extracting("field", "message")
+                .containsExactlyInAnyOrder(
+                        tuple("isbn", "must not be blank"), tuple("pages", "must be greater than or equal to 10"));
     }
 }
