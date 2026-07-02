@@ -3,6 +3,7 @@ package com.matheusgondra.books.book.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.notNullValue;
 
 import com.matheusgondra.books.author.model.Author;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 public class RegisterBookControllerTest extends BaseIntegrationTest {
     private final RegisterBookRequestDTO dto = new RegisterBookRequestDTO("anyTitle", "anyAuthor", "123456789", 120);
@@ -48,6 +50,32 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
                 .body("pages", equalTo(dto.pages()))
                 .body("createdAt", notNullValue())
                 .body("updatedAt", notNullValue());
+    }
+
+    @Test
+    void shouldReturn201WithXml() {
+        var mapper = new XmlMapper();
+
+        RestAssured.given()
+                .contentType(ContentType.XML)
+                .accept(ContentType.XML)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .body(mapper.writeValueAsString(dto))
+                .when()
+                .post(path)
+                .then()
+                .contentType(ContentType.XML)
+                .statusCode(201)
+                .log()
+                .all()
+                .body(hasXPath("/response"))
+                .body("response.id", notNullValue())
+                .body("response.title", equalTo(dto.title()))
+                .body("response.author", equalTo(dto.author()))
+                .body("response.isbn", equalTo(dto.isbn()))
+                .body("response.pages", equalTo(dto.pages().toString()))
+                .body("response.createdAt", notNullValue())
+                .body("response.updatedAt", notNullValue());
     }
 
     @Test
