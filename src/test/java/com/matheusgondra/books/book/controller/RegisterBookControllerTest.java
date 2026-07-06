@@ -66,8 +66,6 @@ public class RegisterBookControllerTest extends BaseIntegrationTest {
                 .then()
                 .contentType(ContentType.XML)
                 .statusCode(201)
-                .log()
-                .all()
                 .body(hasXPath("/response"))
                 .body("response.id", notNullValue())
                 .body("response.title", equalTo(dto.title()))
