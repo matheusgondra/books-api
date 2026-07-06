@@ -3,6 +3,7 @@ package com.matheusgondra.books.book.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasXPath;
 
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 class UpdateBookControllerTest extends BaseIntegrationTest {
     private final String path = "/api/book/{id}";
@@ -62,6 +64,28 @@ class UpdateBookControllerTest extends BaseIntegrationTest {
                 .body("isbn", equalTo("1234567891234"))
                 .body("pages", equalTo(120))
                 .body("author", equalTo("anyName"));
+    }
+
+    @Test
+    void shouldReturn200WithXml() {
+        XmlMapper mapper = new XmlMapper();
+
+        RestAssured.given()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(ContentType.XML)
+                .accept(ContentType.XML)
+                .body(mapper.writeValueAsString(dto))
+                .when()
+                .put(path, id)
+                .then()
+                .contentType(ContentType.XML)
+                .statusCode(200)
+                .body(hasXPath("/BookDetails"))
+                .body("BookDetails.id", equalTo(id.toString()))
+                .body("BookDetails.title", equalTo(dto.title()))
+                .body("BookDetails.isbn", equalTo("1234567891234"))
+                .body("BookDetails.pages", equalTo("120"))
+                .body("BookDetails.author", equalTo("anyName"));
     }
 
     @Test
