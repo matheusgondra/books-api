@@ -1,24 +1,28 @@
 package com.matheusgondra.books.book.controller;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
+import com.matheusgondra.books.book.dto.BookDetails;
 import com.matheusgondra.books.book.model.Book;
 import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.config.BaseIntegrationTest;
+import com.matheusgondra.books.exception.response.ErrorResponse;
 import com.matheusgondra.books.factory.BookFactory;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 
 class LoadBookByIdControllerTest extends BaseIntegrationTest {
-    private final String path = "/api/book/";
+    private final String path = "/api/book/{id}";
 
     private UUID id;
+    private Book book;
 
     @Autowired
     private BookRepository bookRepository;
@@ -33,41 +37,60 @@ class LoadBookByIdControllerTest extends BaseIntegrationTest {
 
     @Test
     void shouldReturn200OnSuccess() {
-        RestAssured.given()
-                .header("Authorization", "Bearer " + accessToken)
+        BookDetails response = RestAssured.given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .when()
-                .get(path + id)
+                .get(path, id)
                 .then()
+                .contentType(ContentType.JSON)
                 .statusCode(200)
-                .body("id", equalTo(id.toString()))
-                .body("title", equalTo("anyTitle"))
-                .body("isbn", equalTo("1234567890123"))
-                .body("pages", equalTo(120))
-                .body("author", equalTo("authorTest"))
-                .body("createdAt", notNullValue())
-                .body("updatedAt", notNullValue());
+                .extract()
+                .as(BookDetails.class);
+
+        assertThat(response)
+                .returns(book.getId(), BookDetails::id)
+                .returns(book.getTitle(), BookDetails::title)
+                .returns(book.getIsbn(), BookDetails::isbn)
+                .returns(book.getAuthor().getName(), BookDetails::author)
+                .returns(book.getCreatedAt(), BookDetails::createdAt)
+                .returns(book.getUpdatedAt(), BookDetails::updatedAt);
     }
 
     @Test
     void shouldReturn401WhenNoAccessToken() {
-        RestAssured.given().when().get(path + id).then().statusCode(401).body("message", equalTo("Unauthorized"));
+        ErrorResponse response = RestAssured.given()
+                .when()
+                .get(path, id)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(401)
+                .extract()
+                .as(ErrorResponse.class);
+
+        assertThat(response).returns(401, ErrorResponse::status).returns("Unauthorized", ErrorResponse::message);
     }
 
     @Test
     void shouldReturn404WhenBookNoExists() {
-        RestAssured.given()
-                .header("Authorization", "Bearer " + accessToken)
+        ErrorResponse response = RestAssured.given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .when()
-                .get(path + UUID.randomUUID())
+                .get(path, UUID.randomUUID())
                 .then()
+                .contentType(ContentType.JSON)
                 .statusCode(404)
-                .body("message", equalTo("Book not found"));
+                .extract()
+                .as(ErrorResponse.class);
+
+        assertThat(response).returns(404, ErrorResponse::status).returns("Book not found", ErrorResponse::message);
     }
 
     private void registerBookTest() {
         Author savedAuthor = authorRepository.save(new Author("authorTest"));
 
-        Book book = bookRepository.save(BookFactory.create(savedAuthor));
+        Book createdBook = bookRepository.save(BookFactory.create(savedAuthor));
+
+        book = bookRepository.findById(createdBook.getId()).orElseThrow();
 
         id = book.getId();
     }
