@@ -1,20 +1,26 @@
 package com.matheusgondra.books.book.controller;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
+import com.matheusgondra.books.book.dto.BookDetails;
 import com.matheusgondra.books.book.model.Book;
 import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.config.BaseIntegrationTest;
+import com.matheusgondra.books.exception.response.ErrorResponse;
 import com.matheusgondra.books.factory.AuthorFactory;
 import com.matheusgondra.books.factory.BookFactory;
+import com.matheusgondra.books.helper.dto.TestPagedModel;
+import com.matheusgondra.books.helper.dto.TestPagedModel.PageMetadata;
 import io.restassured.RestAssured;
+import io.restassured.common.mapper.TypeRef;
+import io.restassured.http.ContentType;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 
 public class LoadBooksControllerTest extends BaseIntegrationTest {
     private final String path = "/api/book";
@@ -37,58 +43,63 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
 
     @Test
     void shouldReturn200OnSuccess() {
-        RestAssured.given()
-                .header("Authorization", "Bearer " + accessToken)
+        var response = RestAssured.given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .queryParam("page", 0)
                 .queryParam("size", 2)
                 .when()
                 .get(path)
                 .then()
+                .contentType(ContentType.JSON)
                 .statusCode(200)
-                .body("page.totalElements", equalTo(3))
-                .body("page.totalPages", equalTo(2))
-                .body("page.size", equalTo(2))
-                .body("page.number", equalTo(0))
-                .body("content.size()", equalTo(2))
-                .body("content[0].id", notNullValue())
-                .body("content[0].title", equalTo("anyTitle"))
-                .body("content[0].isbn", equalTo("1234567890123"))
-                .body("content[0].pages", equalTo(120))
-                .body("content[0].author", equalTo("anyName"))
-                .body("content[0].createdAt", notNullValue())
-                .body("content[0].updatedAt", notNullValue());
+                .extract()
+                .as(new TypeRef<TestPagedModel<BookDetails>>() {});
+
+        PageMetadata page = response.page();
+        assertThat(page.totalElements()).isEqualTo(3);
+        assertThat(page.totalPages()).isEqualTo(2);
+        assertThat(page.size()).isEqualTo(2);
+        assertThat(page.number()).isEqualTo(0);
+        assertThat(response.content()).hasSize(2).first().satisfies(this::assertBookDetails);
     }
 
     @Test
     void shouldReturnEmptyPageWhenNoBooks() {
         bookRepository.deleteAll();
 
-        RestAssured.given()
-                .header("Authorization", "Bearer " + accessToken)
+        var response = RestAssured.given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .queryParam("page", 0)
                 .queryParam("size", 2)
                 .when()
                 .get(path)
                 .then()
                 .statusCode(200)
-                .body("page.totalElements", equalTo(0))
-                .body("page.totalPages", equalTo(0))
-                .body("page.size", equalTo(2))
-                .body("page.number", equalTo(0))
-                .body("content", equalTo(List.of()));
+                .extract()
+                .as(new TypeRef<TestPagedModel<BookDetails>>() {});
+
+        PageMetadata page = response.page();
+        assertThat(page.totalElements()).isEqualTo(0);
+        assertThat(page.totalPages()).isEqualTo(0);
+        assertThat(page.size()).isEqualTo(2);
+        assertThat(page.number()).isEqualTo(0);
+        assertThat(response.content()).isEmpty();
     }
 
     @Test
     void shouldReturn401WhenNoAccessToken() {
-        RestAssured.given()
+        ErrorResponse error = RestAssured.given()
                 .queryParam("page", 0)
                 .queryParam("size", 2)
                 .when()
                 .get(path)
                 .then()
                 .statusCode(401)
-                .body("message", equalTo("Unauthorized"))
-                .body("status", equalTo(401));
+                .extract()
+                .as(ErrorResponse.class);
+
+        assertThat(error.status()).isEqualTo(401);
+        assertThat(error.message()).isEqualTo("Unauthorized");
     }
 
     private void registerBooks() {
@@ -97,5 +108,15 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
         books.forEach(book -> book.setAuthor(savedAuthor));
 
         bookRepository.saveAll(books);
+    }
+
+    private void assertBookDetails(BookDetails bookDetails) {
+        assertThat(bookDetails.id()).isNotNull();
+        assertThat(bookDetails.title()).isEqualTo(books.get(0).getTitle());
+        assertThat(bookDetails.author()).isEqualTo(author.getName());
+        assertThat(bookDetails.isbn()).isEqualTo(books.get(0).getIsbn());
+        assertThat(bookDetails.pages()).isEqualTo(books.get(0).getPages());
+        assertThat(bookDetails.createdAt()).isNotNull();
+        assertThat(bookDetails.updatedAt()).isNotNull();
     }
 }
