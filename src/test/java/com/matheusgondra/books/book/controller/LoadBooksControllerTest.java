@@ -16,11 +16,14 @@ import com.matheusgondra.books.helper.dto.TestPagedModel.PageMetadata;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
+import io.restassured.internal.mapping.Jackson3Mapper;
+import java.lang.reflect.Type;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 public class LoadBooksControllerTest extends BaseIntegrationTest {
     private final String path = "/api/book";
@@ -61,6 +64,32 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
         assertThat(page.size()).isEqualTo(2);
         assertThat(page.number()).isEqualTo(0);
         assertThat(response.content()).hasSize(2).first().satisfies(this::assertBookDetails);
+    }
+
+    @Test
+    void shouldReturn200WithXml() {
+        Type responseType = new TypeRef<TestPagedModel<BookDetails>>() {}.getType();
+
+        Jackson3Mapper xmlMapper = new Jackson3Mapper((type, charset) -> new XmlMapper());
+
+        TestPagedModel<BookDetails> response = RestAssured.given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .accept(ContentType.XML)
+                .when()
+                .get(path)
+                .then()
+                .contentType(ContentType.XML)
+                .statusCode(200)
+                .extract()
+                .as(responseType, xmlMapper);
+
+        TestPagedModel.PageMetadata page = response.page();
+
+        assertThat(page.totalElements()).isEqualTo(3);
+        assertThat(page.totalPages()).isEqualTo(1);
+        assertThat(page.size()).isEqualTo(20);
+        assertThat(page.number()).isEqualTo(0);
+        assertThat(response.content()).hasSize(3).first().satisfies(this::assertBookDetails);
     }
 
     @Test
