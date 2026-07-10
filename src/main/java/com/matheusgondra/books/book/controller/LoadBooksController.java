@@ -8,13 +8,12 @@ import com.matheusgondra.books.doc.annotation.SecurityJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @BookTag
@@ -27,12 +26,9 @@ public class LoadBooksController {
     private final LoadBooks useCase;
 
     @LoadBooksControllerDoc
-    @GetMapping
-    public ResponseEntity<PagedModel<BookDetails>> handle(
-            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        log.debug("Page {}, Page size {}", page, size);
-
-        Pageable pageable = PageRequest.of(page, size);
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<PagedModel<BookDetails>> handle(Pageable pageable) {
+        log.debug("Pageable: {}", pageable);
 
         Page<BookDetails> result = this.useCase.execute(pageable);
 
