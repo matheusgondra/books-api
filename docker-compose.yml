@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:16.13-alpine3.23
+    container_name: books_db
+    environment:
+      POSTGRES_DB: books_db
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+    ports:
+      - 54320:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev -d books_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: books_api
+    ports:
+      - 8080:8080
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/books_db
+      DB_USER: dev
+      DB_PASSWORD: dev
+      JWT_SECRET: idghaçwsiudfhgbnvq3r32io4rgn
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
