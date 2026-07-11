@@ -1,6 +1,7 @@
 package com.matheusgondra.books.book.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasXPath;
 
 import com.matheusgondra.books.author.model.Author;
 import com.matheusgondra.books.author.repository.AuthorRepository;
@@ -12,6 +13,7 @@ import com.matheusgondra.books.exception.response.ErrorResponse;
 import com.matheusgondra.books.factory.BookFactory;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.path.xml.XmlPath;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +56,30 @@ class LoadBookByIdControllerTest extends BaseIntegrationTest {
                 .returns(book.getAuthor().getName(), BookDetails::author)
                 .returns(book.getCreatedAt(), BookDetails::createdAt)
                 .returns(book.getUpdatedAt(), BookDetails::updatedAt);
+    }
+
+    @Test
+    void shouldReturn200WithXml() throws Exception {
+        XmlPath response = RestAssured.given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .accept(ContentType.XML)
+                .when()
+                .get(path, id)
+                .then()
+                .contentType(ContentType.XML)
+                .statusCode(200)
+                .body(hasXPath("/details"))
+                .extract()
+                .xmlPath();
+
+        assertThat(response.getUUID("details.id")).isEqualTo(book.getId());
+        assertThat(response.getString("details.title")).isEqualTo(book.getTitle());
+        assertThat(response.getString("details.isbn")).isEqualTo(book.getIsbn());
+        assertThat(response.getInt("details.pages")).isEqualTo(book.getPages());
+        assertThat(response.getString("details.author"))
+                .isEqualTo(book.getAuthor().getName());
+        assertThat(response.getString("details.createdAt")).isNotBlank();
+        assertThat(response.getString("details.updatedAt")).isNotBlank();
     }
 
     @Test
