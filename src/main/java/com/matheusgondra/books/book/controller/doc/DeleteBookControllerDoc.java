@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @ApiResponse(
         responseCode = "204",
         description = "Book deleted successfully",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class)))
+        content = @Content(schema = @Schema(implementation = Void.class)))
 @ApiNotFoundResponse
 @ApiUnauthorizedResponse
 @ApiServerErrorResponse

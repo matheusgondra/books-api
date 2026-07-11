@@ -1,7 +1,9 @@
 package com.matheusgondra.books.exception.response;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import org.springframework.http.HttpStatus;
 
+@JsonRootName("error")
 public record ErrorResponse(int status, String message) {
     public ErrorResponse(HttpStatus status, String message) {
         this(status.value(), message);

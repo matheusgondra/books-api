@@ -9,19 +9,27 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.springframework.http.MediaType;
 
 @ApiResponse(
         responseCode = "500",
         description = "Internal Server Error",
-        content =
-                @Content(
-                        mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = {
-                            @ExampleObject(
-                                    name = "error",
-                                    value = "{\"status\":500,\"message\":\"Internal Server Error\"}")
-                        }))
+        content = {
+            @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponse.class),
+                    examples = {
+                        @ExampleObject(name = "error", value = "{\"status\":500,\"message\":\"Internal Server Error\"}")
+                    }),
+            @Content(
+                    mediaType = MediaType.APPLICATION_XML_VALUE,
+                    schema = @Schema(implementation = ErrorResponse.class),
+                    examples = {
+                        @ExampleObject(
+                                name = "error",
+                                value = "<error><status>500</status><message>Internal Server Error</message></error>")
+                    })
+        })
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface ApiServerErrorResponse {}
