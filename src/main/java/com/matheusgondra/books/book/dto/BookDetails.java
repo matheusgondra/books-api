@@ -1,9 +1,11 @@
 package com.matheusgondra.books.book.dto;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.matheusgondra.books.book.model.Book;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@JsonRootName("details")
 public record BookDetails(
         UUID id,
         String title,

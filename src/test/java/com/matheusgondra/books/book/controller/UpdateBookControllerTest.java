@@ -80,12 +80,12 @@ class UpdateBookControllerTest extends BaseIntegrationTest {
                 .then()
                 .contentType(ContentType.XML)
                 .statusCode(200)
-                .body(hasXPath("/BookDetails"))
-                .body("BookDetails.id", equalTo(id.toString()))
-                .body("BookDetails.title", equalTo(dto.title()))
-                .body("BookDetails.isbn", equalTo("1234567891234"))
-                .body("BookDetails.pages", equalTo("120"))
-                .body("BookDetails.author", equalTo("anyName"));
+                .body(hasXPath("/details"))
+                .body("details.id", equalTo(id.toString()))
+                .body("details.title", equalTo(dto.title()))
+                .body("details.isbn", equalTo("1234567891234"))
+                .body("details.pages", equalTo("120"))
+                .body("details.author", equalTo("anyName"));
     }
 
     @Test

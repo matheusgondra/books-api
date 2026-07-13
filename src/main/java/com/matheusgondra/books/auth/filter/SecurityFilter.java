@@ -11,17 +11,21 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 @RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private final ObjectMapper objectMapper;
+    private final XmlMapper xmlMapper = new XmlMapper();
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -34,19 +38,19 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            writeUnauthorizedResponse(response);
+            writeUnauthorizedResponse(request, response);
             return;
         }
 
         String token = authorizationHeader.substring("Bearer ".length()).trim();
         if (token.isBlank()) {
-            writeUnauthorizedResponse(response);
+            writeUnauthorizedResponse(request, response);
             return;
         }
 
         String subject = tokenService.validateToken(token);
         if (subject == null) {
-            writeUnauthorizedResponse(response);
+            writeUnauthorizedResponse(request, response);
             return;
         }
 
@@ -59,11 +63,18 @@ public class SecurityFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void writeUnauthorizedResponse(HttpServletResponse response) throws IOException {
+    private void writeUnauthorizedResponse(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Unauthorized");
-
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
-        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+
+        String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
+        if (acceptHeader != null && acceptHeader.contains(MediaType.APPLICATION_XML_VALUE)) {
+            response.setContentType(MediaType.APPLICATION_XML_VALUE);
+            response.getWriter().write(xmlMapper.writeValueAsString(errorResponse));
+        } else {
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        }
     }
 }

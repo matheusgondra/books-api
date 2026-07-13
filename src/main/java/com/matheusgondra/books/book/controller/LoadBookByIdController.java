@@ -8,6 +8,7 @@ import com.matheusgondra.books.doc.annotation.SecurityJWT;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,9 @@ public class LoadBookByIdController {
     private final LoadBookById useCase;
 
     @LoadBookByIdControllerDoc
-    @GetMapping("{id}")
+    @GetMapping(
+            value = "{id}",
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BookDetails> handle(@PathVariable UUID id) {
         BookDetails result = this.useCase.execute(id);
 

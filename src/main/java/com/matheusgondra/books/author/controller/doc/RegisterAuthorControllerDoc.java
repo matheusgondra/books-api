@@ -18,10 +18,7 @@ import java.lang.annotation.Target;
 @ApiResponse(
         responseCode = "201",
         description = "Author registered successfully",
-        content =
-                @Content(
-                        mediaType = "application/json",
-                        schema = @Schema(implementation = RegisterAuthorResponseDTO.class)))
+        content = @Content(schema = @Schema(implementation = RegisterAuthorResponseDTO.class)))
 @ApiBadRequestResponse
 @ApiConflictResponse
 @ApiUnauthorizedResponse

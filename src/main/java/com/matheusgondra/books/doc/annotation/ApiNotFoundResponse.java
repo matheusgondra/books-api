@@ -14,12 +14,20 @@ import org.springframework.http.MediaType;
 @ApiResponse(
         responseCode = "404",
         description = "Not Found",
-        content =
-                @Content(
-                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = {@ExampleObject(name = "error", value = "{\"status\":404,\"message\":\"Not Found\"}")
-                        }))
+        content = {
+            @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponse.class),
+                    examples = {@ExampleObject(name = "error", value = "{\"status\":404,\"message\":\"Not Found\"}")}),
+            @Content(
+                    mediaType = MediaType.APPLICATION_XML_VALUE,
+                    schema = @Schema(implementation = ErrorResponse.class),
+                    examples = {
+                        @ExampleObject(
+                                name = "error",
+                                value = "<error><status>404</status><message>Not Found</message></error>")
+                    })
+        })
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface ApiNotFoundResponse {}

@@ -12,7 +12,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.springframework.http.MediaType;
 
 @Operation(
         summary = "Load a book by its ID",
@@ -20,10 +19,7 @@ import org.springframework.http.MediaType;
 @ApiResponse(
         responseCode = "200",
         description = "Book loaded successfully",
-        content =
-                @Content(
-                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-                        schema = @Schema(implementation = BookDetails.class)))
+        content = @Content(schema = @Schema(implementation = BookDetails.class)))
 @ApiNotFoundResponse
 @ApiUnauthorizedResponse
 @ApiServerErrorResponse
