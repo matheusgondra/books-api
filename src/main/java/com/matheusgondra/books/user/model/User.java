@@ -1,15 +1,18 @@
 package com.matheusgondra.books.user.model;
 
+import com.matheusgondra.books.book.model.Book;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +47,9 @@ public class User implements UserDetails {
 
     @Column(nullable = false, length = 255)
     private String password;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Book> books;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

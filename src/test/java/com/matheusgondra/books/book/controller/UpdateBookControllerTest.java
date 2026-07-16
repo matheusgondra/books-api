@@ -11,6 +11,8 @@ import com.matheusgondra.books.book.dto.request.UpdateBookRequestDTO;
 import com.matheusgondra.books.book.model.Book;
 import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.config.BaseIntegrationTest;
+import com.matheusgondra.books.factory.UserFactory;
+import com.matheusgondra.books.user.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.util.List;
@@ -34,14 +36,19 @@ class UpdateBookControllerTest extends BaseIntegrationTest {
     @Autowired
     private AuthorRepository authorRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
         Author author = authorRepository.save(new Author("anyName"));
+        var owner = userRepository.save(UserFactory.create());
         Book book = Book.builder()
                 .title("anyTitle")
                 .isbn("1234567891234")
                 .pages(120)
                 .author(author)
+                .owner(owner)
                 .build();
         bookRepository.save(book);
 

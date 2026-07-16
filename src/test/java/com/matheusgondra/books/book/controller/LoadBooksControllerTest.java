@@ -11,8 +11,10 @@ import com.matheusgondra.books.config.BaseIntegrationTest;
 import com.matheusgondra.books.exception.response.ErrorResponse;
 import com.matheusgondra.books.factory.AuthorFactory;
 import com.matheusgondra.books.factory.BookFactory;
+import com.matheusgondra.books.factory.UserFactory;
 import com.matheusgondra.books.helper.dto.TestPagedModel;
 import com.matheusgondra.books.helper.dto.TestPagedModel.PageMetadata;
+import com.matheusgondra.books.user.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
@@ -38,6 +40,9 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
@@ -133,8 +138,10 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
 
     private void registerBooks() {
         Author savedAuthor = authorRepository.save(author);
+        var savedOwner = userRepository.save(UserFactory.create());
 
         books.forEach(book -> book.setAuthor(savedAuthor));
+        books.forEach(book -> book.setOwner(savedOwner));
 
         bookRepository.saveAll(books);
     }

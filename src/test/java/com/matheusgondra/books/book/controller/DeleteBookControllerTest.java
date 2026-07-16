@@ -7,6 +7,8 @@ import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.model.Book;
 import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.config.BaseIntegrationTest;
+import com.matheusgondra.books.factory.UserFactory;
+import com.matheusgondra.books.user.repository.UserRepository;
 import io.restassured.RestAssured;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,14 +27,19 @@ public class DeleteBookControllerTest extends BaseIntegrationTest {
     @Autowired
     private AuthorRepository authorRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
         Author author = authorRepository.save(new Author("anyName"));
+        var owner = userRepository.save(UserFactory.create());
         Book book = Book.builder()
                 .title("anyTitle")
                 .author(author)
                 .isbn("1234567890123")
                 .pages(120)
+                .owner(owner)
                 .build();
 
         bookRepository.save(book);
