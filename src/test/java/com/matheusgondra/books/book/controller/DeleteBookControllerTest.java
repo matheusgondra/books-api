@@ -7,7 +7,6 @@ import com.matheusgondra.books.author.repository.AuthorRepository;
 import com.matheusgondra.books.book.model.Book;
 import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.config.BaseIntegrationTest;
-import com.matheusgondra.books.factory.UserFactory;
 import com.matheusgondra.books.user.repository.UserRepository;
 import io.restassured.RestAssured;
 import java.util.UUID;
@@ -33,7 +32,7 @@ public class DeleteBookControllerTest extends BaseIntegrationTest {
     @BeforeEach
     void setUp() {
         Author author = authorRepository.save(new Author("anyName"));
-        var owner = userRepository.save(UserFactory.create());
+        var owner = userRepository.save(loggedUser);
         Book book = Book.builder()
                 .title("anyTitle")
                 .author(author)

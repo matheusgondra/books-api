@@ -8,6 +8,8 @@ import com.matheusgondra.books.book.dto.BookDetails;
 import com.matheusgondra.books.book.model.Book;
 import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.factory.BookFactory;
+import com.matheusgondra.books.user.model.User;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class LoadBooksServiceTest {
+    private final User owner = User.builder().id(UUID.randomUUID()).build();
     private final Pageable pageable = PageRequest.of(0, 5);
 
     @InjectMocks
@@ -32,19 +35,19 @@ public class LoadBooksServiceTest {
     void setUp() {
         Page<Book> page = BookFactory.createPage();
 
-        when(repository.findAll(pageable)).thenReturn(page);
+        when(repository.findByOwner(owner, pageable)).thenReturn(page);
     }
 
     @Test
-    void shouldCallFindAllOnRepository() {
-        sut.execute(pageable);
+    void shouldCallFindByOwnerOnRepository() {
+        sut.execute(owner, pageable);
 
-        verify(repository).findAll(pageable);
+        verify(repository).findByOwner(owner, pageable);
     }
 
     @Test
     void shouldReturnPageOfBookDetailsOnSuccess() {
-        Page<BookDetails> result = sut.execute(pageable);
+        Page<BookDetails> result = sut.execute(owner, pageable);
 
         var expected = BookFactory.createDetailsPage();
 

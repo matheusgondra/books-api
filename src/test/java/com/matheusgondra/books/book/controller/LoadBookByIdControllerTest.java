@@ -11,8 +11,6 @@ import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.config.BaseIntegrationTest;
 import com.matheusgondra.books.exception.response.ErrorResponse;
 import com.matheusgondra.books.factory.BookFactory;
-import com.matheusgondra.books.factory.UserFactory;
-import com.matheusgondra.books.user.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.path.xml.XmlPath;
@@ -33,9 +31,6 @@ class LoadBookByIdControllerTest extends BaseIntegrationTest {
 
     @Autowired
     private AuthorRepository authorRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
@@ -118,10 +113,9 @@ class LoadBookByIdControllerTest extends BaseIntegrationTest {
 
     private void registerBookTest() {
         Author savedAuthor = authorRepository.save(new Author("authorTest"));
-        var savedOwner = userRepository.save(UserFactory.create());
 
         Book bookToSave = BookFactory.create(savedAuthor);
-        bookToSave.setOwner(savedOwner);
+        bookToSave.setOwner(loggedUser);
 
         Book createdBook = bookRepository.save(bookToSave);
 
