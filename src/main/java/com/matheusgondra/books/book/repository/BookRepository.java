@@ -15,5 +15,7 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
     @EntityGraph(attributePaths = "author")
     Optional<Book> findWithAuthorById(UUID id);
 
+    Optional<Book> findWithAuthorByIdAndOwner(UUID id, User owner);
+
     Page<Book> findByOwner(User owner, Pageable pageable);
 }
