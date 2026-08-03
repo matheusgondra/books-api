@@ -18,4 +18,6 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
     Optional<Book> findWithAuthorByIdAndOwner(UUID id, User owner);
 
     Page<Book> findByOwner(User owner, Pageable pageable);
+
+    Optional<Book> findByIdAndOwner(UUID id, User owner);
 }
