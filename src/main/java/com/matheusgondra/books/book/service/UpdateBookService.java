@@ -23,7 +23,9 @@ public class UpdateBookService implements UpdateBook {
     @Override
     @Transactional
     public BookDetails execute(UUID id, UpdateBookData data) {
-        Book book = this.bookRepository.findWithAuthorById(id).orElseThrow(BookNotFoundException::new);
+        Book book = this.bookRepository
+                .findWithAuthorByIdAndOwner(id, data.owner())
+                .orElseThrow(BookNotFoundException::new);
 
         this.updateBook(book, data);
 

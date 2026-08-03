@@ -15,6 +15,7 @@ import com.matheusgondra.books.book.repository.BookRepository;
 import com.matheusgondra.books.book.usecase.update.UpdateBookData;
 import com.matheusgondra.books.exception.BookNotFoundException;
 import com.matheusgondra.books.factory.BookFactory;
+import com.matheusgondra.books.user.model.User;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class UpdateBookServiceTest {
     private final UUID id = UUID.randomUUID();
-    private final UpdateBookData data = new UpdateBookData("anyTitle", "anyAuthor", "anyIsbn", 120);
+    private final UpdateBookData data = new UpdateBookData(new User(), "anyTitle", "anyAuthor", "anyIsbn", 120);
     private final Book bookMock = BookFactory.createWithAuthor();
     private final Author authorMock = bookMock.getAuthor();
 
@@ -43,7 +44,7 @@ public class UpdateBookServiceTest {
     @BeforeEach
     void setUp() {
 
-        when(bookRepository.findWithAuthorById(id)).thenReturn(Optional.of(bookMock));
+        when(bookRepository.findWithAuthorByIdAndOwner(id, data.owner())).thenReturn(Optional.of(bookMock));
         lenient().when(authorRepository.findByName(data.author())).thenReturn(Optional.of(authorMock));
     }
 
@@ -51,12 +52,12 @@ public class UpdateBookServiceTest {
     void shouldCallFindWithAuthorByIdOnBookRepository() {
         sut.execute(id, data);
 
-        verify(bookRepository).findWithAuthorById(id);
+        verify(bookRepository).findWithAuthorByIdAndOwner(id, data.owner());
     }
 
     @Test
     void shouldThrowBookNotFoundExceptionWhenBookIsNotFound() {
-        when(bookRepository.findWithAuthorById(id)).thenReturn(Optional.empty());
+        when(bookRepository.findWithAuthorByIdAndOwner(id, data.owner())).thenReturn(Optional.empty());
 
         assertThrows(BookNotFoundException.class, () -> sut.execute(id, data));
     }
