@@ -13,7 +13,9 @@ public class PublicAuthPaths {
         "/docs",
         "/docs/**",
         "/**/favicon.svg",
-        "/**/favicon.ico"
+        "/**/favicon.ico",
+        "/actuator",
+        "/actuator/**"
     };
 
     public static boolean isPublicRoute(String route) {
