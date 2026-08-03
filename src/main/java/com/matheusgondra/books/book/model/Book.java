@@ -1,6 +1,7 @@
 package com.matheusgondra.books.book.model;
 
 import com.matheusgondra.books.author.model.Author;
+import com.matheusgondra.books.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -44,6 +45,10 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

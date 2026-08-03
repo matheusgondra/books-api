@@ -2,6 +2,8 @@ package com.matheusgondra.books.auth.helper;
 
 import com.matheusgondra.books.auth.dto.request.LoginRequestDTO;
 import com.matheusgondra.books.auth.dto.request.SignupRequestDTO;
+import com.matheusgondra.books.user.model.User;
+import com.matheusgondra.books.user.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +14,10 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class AuthHelper {
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
 
-    public String getAccessToken() {
-        var signupDTO = new SignupRequestDTO("john", "doe", "john@mail.com", "Password@123");
+    public AuthSession getLoggedUser() {
+        SignupRequestDTO signupDTO = createSignupRequest();
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(signupDTO))
@@ -37,6 +40,18 @@ public class AuthHelper {
 
         String accessToken =
                 objectMapper.readTree(loginResponse).get("accessToken").asString();
-        return accessToken;
+
+        User loggedUser = userRepository.findByEmail(signupDTO.email()).orElseThrow();
+        return new AuthSession(loggedUser, accessToken);
     }
+
+    private SignupRequestDTO createSignupRequest() {
+        final String FIRST_NAME = "John";
+        final String LAST_NAME = "Doe";
+        final String EMAIL = "john.doe@gmail.com";
+        final String PASSWORD = "Password@123";
+        return new SignupRequestDTO(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD);
+    }
+
+    public record AuthSession(User user, String accessToken) {}
 }

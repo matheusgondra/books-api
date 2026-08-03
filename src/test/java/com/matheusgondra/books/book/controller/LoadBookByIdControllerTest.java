@@ -114,7 +114,10 @@ class LoadBookByIdControllerTest extends BaseIntegrationTest {
     private void registerBookTest() {
         Author savedAuthor = authorRepository.save(new Author("authorTest"));
 
-        Book createdBook = bookRepository.save(BookFactory.create(savedAuthor));
+        Book bookToSave = BookFactory.create(savedAuthor);
+        bookToSave.setOwner(loggedUser);
+
+        Book createdBook = bookRepository.save(bookToSave);
 
         book = bookRepository.findById(createdBook.getId()).orElseThrow();
 

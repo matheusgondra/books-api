@@ -8,12 +8,14 @@ import com.matheusgondra.books.book.usecase.register.RegisterBookData;
 import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
 import com.matheusgondra.books.doc.annotation.BookTag;
 import com.matheusgondra.books.doc.annotation.SecurityJWT;
+import com.matheusgondra.books.user.model.User;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,10 +35,11 @@ public class RegisterBookController {
     @PostMapping(
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<RegisterBookResponseDTO> handle(@RequestBody @Valid RegisterBookRequestDTO dto) {
+    public ResponseEntity<RegisterBookResponseDTO> handle(
+            @RequestBody @Valid RegisterBookRequestDTO dto, @AuthenticationPrincipal User user) {
         log.debug("DTO: {}", dto);
 
-        RegisterBookData data = new RegisterBookData(dto.title(), dto.author(), dto.isbn(), dto.pages());
+        RegisterBookData data = new RegisterBookData(user, dto.title(), dto.author(), dto.isbn(), dto.pages());
         RegisterBookResult result = this.useCase.execute(data);
 
         log.debug("UseCase result: {}", result);

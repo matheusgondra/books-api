@@ -135,6 +135,7 @@ public class LoadBooksControllerTest extends BaseIntegrationTest {
         Author savedAuthor = authorRepository.save(author);
 
         books.forEach(book -> book.setAuthor(savedAuthor));
+        books.forEach(book -> book.setOwner(loggedUser));
 
         bookRepository.saveAll(books);
     }

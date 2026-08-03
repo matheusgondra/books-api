@@ -1,6 +1,7 @@
 package com.matheusgondra.books.config;
 
 import com.matheusgondra.books.auth.helper.AuthHelper;
+import com.matheusgondra.books.user.model.User;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import org.testcontainers.utility.DockerImageName;
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class BaseIntegrationTest {
+    protected User loggedUser;
     protected String accessToken;
 
     static final PostgreSQLContainer<?> postgres;
@@ -46,7 +48,9 @@ public abstract class BaseIntegrationTest {
     void setUpRestAssured() {
         RestAssured.port = port;
 
-        accessToken = authHelper.getAccessToken();
+        var authSession = authHelper.getLoggedUser();
+        loggedUser = authSession.user();
+        accessToken = authSession.accessToken();
     }
 
     @AfterEach

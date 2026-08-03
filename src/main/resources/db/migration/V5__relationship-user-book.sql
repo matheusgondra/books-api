@@ -1,0 +1,1 @@
+ALTER TABLE books ADD COLUMN owner_id UUID REFERENCES users(id);

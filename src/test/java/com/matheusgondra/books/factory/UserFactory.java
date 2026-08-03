@@ -5,14 +5,19 @@ import com.matheusgondra.books.user.model.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class UserFactory {
+    public static final String FIRST_NAME = "John";
+    public static final String LAST_NAME = "Doe";
+    public static final String EMAIL = "john.doe@gmail.com";
+    public static final String PASSWORD = "Password@123";
+
     public static User create() {
         HashService hashService = new HashService(new BCryptPasswordEncoder());
-        String passwordHash = hashService.hash("Password@123");
+        String passwordHash = hashService.hash(PASSWORD);
 
         return User.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@gmail.com")
+                .firstName(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .email(EMAIL)
                 .password(passwordHash)
                 .build();
     }

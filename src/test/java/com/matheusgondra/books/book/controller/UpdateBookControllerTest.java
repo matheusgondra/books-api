@@ -42,6 +42,7 @@ class UpdateBookControllerTest extends BaseIntegrationTest {
                 .isbn("1234567891234")
                 .pages(120)
                 .author(author)
+                .owner(loggedUser)
                 .build();
         bookRepository.save(book);
 

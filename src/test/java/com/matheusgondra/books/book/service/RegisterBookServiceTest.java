@@ -17,6 +17,7 @@ import com.matheusgondra.books.book.usecase.register.RegisterBookResult;
 import com.matheusgondra.books.exception.BookAlreadyExistsException;
 import com.matheusgondra.books.factory.AuthorFactory;
 import com.matheusgondra.books.factory.BookFactory;
+import com.matheusgondra.books.user.model.User;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class RegisterBookServiceTest {
-    private final RegisterBookData data = new RegisterBookData("anyTitle", "anyName", "1234567890123", 120);
+    private final RegisterBookData data = new RegisterBookData(new User(), "anyTitle", "anyName", "1234567890123", 120);
     private final Author authorMock = AuthorFactory.create();
     private final Book bookMock = BookFactory.create(authorMock);
 

@@ -33,6 +33,7 @@ public class RegisterBookService implements RegisterBook {
                 .isbn(data.isbn())
                 .pages(data.pages())
                 .author(author)
+                .owner(data.owner())
                 .build();
         book = this.bookRepository.save(book);
 

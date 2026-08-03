@@ -32,6 +32,7 @@ public class LoginControllerTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setup() {
+        userRepository.deleteAll();
         User user = UserFactory.create();
 
         userRepository.save(user);
