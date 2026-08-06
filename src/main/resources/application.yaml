@@ -7,6 +7,29 @@ logging:
     root: INFO
     com.matheusgondra.books: ${LOG_LEVEL:INFO}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - prometheus
+          - info
+          - metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name:books}
+      env: production
+    distribution:
+        percentiles-histogram:
+          http:
+            server:
+              requests: true
+
+
 springdoc:
   api-docs:
     path: /api-docs
