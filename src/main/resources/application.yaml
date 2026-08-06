@@ -19,6 +19,16 @@ management:
   endpoint:
     health:
       show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name:books}
+      env: production
+    distribution:
+        percentiles-histogram:
+          http:
+            server:
+              requests: true
+
 
 springdoc:
   api-docs:

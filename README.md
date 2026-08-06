@@ -71,6 +71,17 @@ mvnw.cmd spring-boot:run
 
 A aplicacao sobe por padrao na porta `8080`.
 
+## Observabilidade com Grafana
+
+Ao subir o `docker-compose`, o Grafana fica disponível em `http://localhost:3000` com o usuário `admin` e senha `admin`.
+
+O stack já vem com:
+
+- datasource do Prometheus provisionado automaticamente
+- dashboard da aplicação Books API provisionado automaticamente
+
+O Prometheus coleta as métricas expostas em `/actuator/prometheus`.
+
 ## Documentacao da API
 
 - OpenAPI JSON: `/api-docs`
